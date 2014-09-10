@@ -1,0 +1,64 @@
+﻿<%-- 
+Name:	IBatisNetGen.cst
+Version: 2007.02.08
+Author: Yaojian  ( smrtk@hotmail.com )
+Description: Generate data class and its sql mapping file for IBatis (see ibatis.apache.org)
+--%>
+<%@ CodeTemplate Language="C#" TargetLanguage="C#" Src="CSBatisBuilder.cs" Inherits="TableTemplate" Debug="true"  Description="Generates IBatis map and data class from a database table." %>
+
+<%@ Assembly Name="System" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Assembly Name="CodeSmith.BaseTemplates" %>
+<%@ Assembly Name="CodeSmith.CustomProperties" %>
+<%@ Assembly Name="SchemaExplorer" %>
+<%--<%@ Assembly Src="CSBatisBuilder.cs" %>--%>
+
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.ComponentModel" %>
+<%@ Import Namespace="System.Collections.Specialized" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Import Namespace="System.Text" %>
+<%@ Import Namespace="CSBatisBuilder" %>
+<script runat="template">
+	protected override FileOption GetDefaultFileOption() {
+		return FileSetOption.CreateDefaultEntityOption();
+	}
+</script>
+package <% =Builder.EntityNamespace %>;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.math.BigDecimal;
+
+<%	if (Builder.EntityOption.Usings != null) {
+		foreach (String s in Builder.EntityOption.Usings) { %>
+import <% =s %>;
+<%		} %>
+<%	} %>
+
+/**
+ * <% =Builder.EntityName %>
+ */
+public <% =Builder.EntityPartialDecl %>class <% =Builder.EntityName %><% =Builder.EntityBaseDecl %> implements Serializable {
+    
+    <% foreach (ColumnInfo c in Builder.Columns) { %>
+
+    <% =c.VarAccessDecl %> <% =c.ClrTypeDecl %> <% =c.VarName %>;
+	
+	/**
+	 *getter <% =c.VarName %>
+	 */
+	<% =c.PropAccessDecl %> <% =c.ClrTypeDecl %> get<% =c.PropName %>() {
+    	return <% =c.VarName %>;
+    }
+	
+	/**
+	 *setter <% =c.VarName %>
+	 */
+	<% =c.PropAccessDecl %> void set<% =c.PropName %>(<% =c.ClrTypeDecl %> <% =c.VarName %>) {
+    	this.<% =c.VarName %> = <% =c.VarName %>;
+    }
+	
+	<% } %>
+
+}

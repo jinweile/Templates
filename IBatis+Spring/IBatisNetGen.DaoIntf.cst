@@ -1,0 +1,150 @@
+﻿<%-- 
+Name:	IBatisGen.DaoIntf.cst
+Version: 2007.02.08
+Author: jinwl  ( jinweile@163.com )
+Description: Generates the data access interface for IBatis (see ibatis.apache.org)
+--%>
+<%@ CodeTemplate Language="C#" TargetLanguage="C#" Src="CSBatisBuilder.cs" Inherits="TableTemplate" Debug="true"  Description="Generates IBatis map and data class from a database table." %>
+
+<%@ Assembly Name="System" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Assembly Name="CodeSmith.BaseTemplates" %>
+<%@ Assembly Name="CodeSmith.CustomProperties" %>
+<%@ Assembly Name="SchemaExplorer" %>
+<%--<%@ Assembly Src="CSBatisBuilder.cs" %>--%>
+
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.ComponentModel" %>
+<%@ Import Namespace="System.Collections.Specialized" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Import Namespace="System.Text" %>
+<%@ Import Namespace="CSBatisBuilder" %>
+<script runat="template">
+	protected override FileOption GetDefaultFileOption() {
+		return FileSetOption.CreateDefaultDaoIntfOption();
+	}
+</script>
+package <% =Builder.DaoIntfNamespace %>;
+
+import java.sql.SQLException;
+import java.util.Map;
+import java.util.List;
+import java.util.Date;
+import java.math.BigDecimal;
+
+<%	if (Builder.DaoIntfOption.Usings != null) {
+		foreach (String s in Builder.DaoIntfOption.Usings) { %>
+import <% =s %>.*;
+<%		} %>
+<%	} %>
+<%	if (Builder.EntityNamespace != Builder.DaoIntfNamespace) { %>
+import <% =Builder.EntityNamespace %>.*;
+<%	} %>
+
+/**
+ *<% =Builder.DaoIntfName %> is the DAO interface for <% =Builder.EntityQualifiedName %>
+ */
+public <% =Builder.DaoIntfPartialDecl %>interface <% =Builder.DaoIntfName %><% =Builder.DaoIntfBaseDecl %> {        
+
+<%	//GetCount
+if (Builder.DaoMethodSetOption.GetCountOption.GenerateIntf) { %>
+	/**
+	 *Returns the total count of objects
+	 */
+	int <% =Builder.GetCountMethod %>() throws SQLException;
+
+<%	} %>
+<%	//Find
+if (Builder.DaoMethodSetOption.FindOption.GenerateIntf) { %>
+	/**
+	 *Finds a <% =Builder.EntityName %> instance by the primary key value
+	 */
+	<% =Builder.EntityName %> <% =Builder.FindMethod %>(<% =Builder.GetClrParamsDecl(Builder.PkColumns) %>) throws SQLException;
+
+<%	} //if %>
+<%	//QuickFind
+if (Builder.HasLob && Builder.DaoMethodSetOption.FindNonLobOption.GenerateIntf) { %>
+	/**
+	 *Finds a <% =Builder.EntityName %> instance by the primary key value without Lob columns loaded
+	 */
+	<% =Builder.EntityName %> <% =Builder.FindNonLobMethod %>(<% =Builder.GetClrParamsDecl(Builder.PkColumns) %>) throws SQLException;
+	
+<%	} //if %>
+<%	//FindAll
+if (Builder.DaoMethodSetOption.FindAllOption.GenerateIntf) { %>
+	/**
+	 *Finds all <% =Builder.EntityName %> instances.
+	 */
+	List<<% =Builder.EntityName %>> <% =Builder.FindAllMethod %>() throws SQLException;
+	
+<%	} //if %>
+<%	//QuickFindAll
+if (Builder.DaoMethodSetOption.FindNonLobAllOption.GenerateIntf) { %>
+	/**
+	 *Finds all <% =Builder.EntityName %> instances without Lob columns loaded.
+	 */
+	List<<% =Builder.EntityName %>> <% =Builder.FindNonLobAllMethod %>() throws SQLException;
+	
+<%	} //if %>
+<%	//FindBy, FindByNonLob
+foreach (ColumnInfo c in Builder.FinderColumns) { 
+	//FindBy
+	if (Builder.DaoMethodSetOption.FindByOption.GenerateIntf) { %>
+	/**
+	 *Finds <% =Builder.EntityName %> instances by <% =c.PropName %> value.
+	 */
+	List<<% =Builder.EntityName %>> <% =Builder.FindByMethod(c) %>(<% =c.ClrParamDecl %>) throws SQLException;
+	
+<%		} //if	%>
+<%		//QuickFindBy
+	if (Builder.HasLob && Builder.DaoMethodSetOption.FindNonLobByOption.GenerateIntf) { %>
+	/**
+	 *Finds <% =Builder.EntityName %> instances by <% =c.PropName %> value without Lob columns loaded.
+	 */
+	List<<% =Builder.EntityName %>> <% =Builder.FindNonLobByMethod(c) %>(<% =c.ClrParamDecl %>) throws SQLException;
+	
+<%		} //if
+} //foreach %>
+<%	//Insert
+if (Builder.DaoMethodSetOption.InsertOption.GenerateIntf) { %>
+	/**
+	 *Inserts a new <% =Builder.EntityName %> instance into underlying database table.
+	 */
+	<% =Builder.PkColumns[0].ClrTypeDecl%> <% =Builder.InsertMethod %>(<% =Builder.EntityName %> obj) throws SQLException;
+	
+<%	} //if %>
+<%	//Update
+if (Builder.DaoMethodSetOption.UpdateOption.GenerateIntf) { %>
+	/**
+	 *Update the underlying database record of a <% =Builder.EntityName %> instance.
+	 */
+	int <% =Builder.UpdateMethod %>(<% =Builder.EntityName %> obj) throws SQLException;
+	
+<%	} //if %>
+<%	//Delete
+if (Builder.DaoMethodSetOption.DeleteOption.GenerateIntf) { %>
+	/**
+	 *Delete the underlying database record of a <% =Builder.EntityName %> instance.
+	 */
+	int <% =Builder.DeleteMethod %>(<% =Builder.EntityName %> obj) throws SQLException;
+	
+<%	} //if %>
+<%  //DeleteBy
+if (Builder.DaoMethodSetOption.DeleteByOption.GenerateIntf) { %>
+<%		foreach (ColumnInfo c in Builder.FinderColumns) { %>
+    /**
+	 *Deletes <% =Builder.EntityName %> instances by <% =Builder.EntityName + "." + c.PropName %>.
+	 */
+	int <% =Builder.DeleteByMethod(c) %>(<% =c.ClrParamDecl %>) throws SQLException;
+	
+<%		} //foreach %>
+<%	} //if %>
+<%	//Reload
+if (Builder.DaoMethodSetOption.ReloadOption.GenerateIntf) { %>
+	/**
+	 *Reload the underlying database record of a <% =Builder.EntityName %> instance.
+	 */
+	void <% =Builder.ReloadMethod %>(<% =Builder.EntityName %> obj) throws SQLException;
+	
+<%	} //if %>
+}
