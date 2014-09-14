@@ -1,7 +1,7 @@
-<%-- 
+﻿<%-- 
 Name:	IBatisGen.Database.cst
 Version: 2007.02.08
-Author: Yaojian  ( smrtk@hotmail.com )
+Author: jinwl  ( jinweile@163.com )
 Description: Generates SQLMapping/DataClass/DaoIntf/DaoImpl files for IBatis (see ibatis.apache.org)
 --%>
 <%@ CodeTemplate Language="C#" TargetLanguage="C#" Src="CSBatisBuilder.cs" Inherits="DatabaseCompositeTemplate" Debug="true"  Description="Generates IBatis map and data class from a database table." %>
@@ -11,7 +11,7 @@ Description: Generates SQLMapping/DataClass/DaoIntf/DaoImpl files for IBatis (se
 <%@ Assembly Name="CodeSmith.BaseTemplates" %>
 <%@ Assembly Name="CodeSmith.CustomProperties" %>
 <%@ Assembly Name="SchemaExplorer" %>
-<%@ Assembly Src="CSBatisBuilder.cs" %>
+<%--<%@ Assembly Src="CSBatisBuilder.cs" %>--%>
 
 <%@ Import Namespace="SchemaExplorer" %>
 <%@ Import Namespace="System.ComponentModel" %>

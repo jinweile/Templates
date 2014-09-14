@@ -1,7 +1,7 @@
 ﻿<%-- 
 Name:	IBatisNetGen.cst
 Version: 2007.02.08
-Author: Yaojian  ( smrtk@hotmail.com )
+Author: jinwl  ( jinweile@163.com )
 Description: Generate data class and its sql mapping file for IBatis (see ibatis.apache.org)
 --%>
 <%@ CodeTemplate Language="C#" TargetLanguage="C#" Src="CSBatisBuilder.cs" Inherits="TableTemplate" Debug="true"  Description="Generates IBatis map and data class from a database table." %>
