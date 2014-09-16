@@ -48,7 +48,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 	<% } %>
 
 	<select id="<% =Builder.GetCountStmtId %>" resultClass="Integer">
-		SELECT count(1) FROM <% =Builder.QualifiedTableName %>
+		SELECT count(1) FROM <% =Builder.TableName %>
 	</select>
 	
 	<select id="<% =Builder.FindAllStmtId %>" resultMap="<% =Builder.FullResultMapId %>">
@@ -57,7 +57,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 				ColumnInfo c = Builder.Columns[i];%>
 			<% 	if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
 <% 				} %>
-		FROM <% =Builder.QualifiedTableName %>
+		FROM <% =Builder.TableName %>
 	</select>
 	<% if (Builder.HasLob) { %>
 	<select id="<% =Builder.FindNonLobAllStmtId %>" resultMap="<% =Builder.NonLobResultMapId %>">
@@ -66,7 +66,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 				ColumnInfo c = Builder.NonLobColumns[i];%>
 			<% 	if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
 <% 				} %>
-		FROM <% =Builder.QualifiedTableName %>
+		FROM <% =Builder.TableName %>
 	</select>
 	<% } %>
 	
@@ -76,7 +76,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 				ColumnInfo c = Builder.Columns[i];%>
 			<% 	if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
 <% 				} %>
-		FROM <% =Builder.QualifiedTableName %>
+		FROM <% =Builder.TableName %>
 		WHERE
 			<% 	for (int i = 0; i < Builder.PkColumns.Count; i++) { 
 					ColumnInfo c = Builder.PkColumns[i]; %>
@@ -90,7 +90,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 				ColumnInfo c = Builder.Columns[i];%>
 			<% 	if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
 <% 				} %>
-		FROM <% =Builder.QualifiedTableName %>
+		FROM <% =Builder.TableName %>
 		WHERE
 			<% 	for (int i = 0; i < Builder.PkColumns.Count; i++) { 
 					ColumnInfo c = Builder.PkColumns[i]; %>
@@ -107,7 +107,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 				ColumnInfo c1 = Builder.Columns[i];%>
 			<% 	if (i > 0) { %>, <% } %><% 	=c1.ResultColumnName %>
 <% 				} %>
-		FROM <% =Builder.QualifiedTableName %>
+		FROM <% =Builder.TableName %>
 		WHERE (<% =c.ResultColumnName %> = #value#)
 	</select>
 	<% if (Builder.HasLob) { %>
@@ -117,7 +117,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 				ColumnInfo c1 = Builder.Columns[i];%>
 			<% 	if (i > 0) { %>, <% } %><% 	=c1.ResultColumnName %>
 <% 				} %>
-		FROM <% =Builder.QualifiedTableName %>
+		FROM <% =Builder.TableName %>
 		WHERE (<% =c.ResultColumnName %> = #value#)
 	</select>
 	<% } %>
@@ -125,7 +125,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 	<% 	} //end if%>
 	
 	<insert id="<% =Builder.InsertStmtId %>" parameterClass="<% =Builder.EntityName %>">
-		INSERT INTO <% =Builder.QualifiedTableName %> (
+		INSERT INTO <% =Builder.TableName %> (
 			<%
 			    	for (int i = 0; i < Builder.Columns.Count; i++) { 
 					ColumnInfo c = Builder.Columns[i]; %>
@@ -144,7 +144,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 	</insert>
 
 	<update id="<% =Builder.UpdateStmtId %>" parameterClass="<% =Builder.EntityName %>">
-		UPDATE <% =Builder.QualifiedTableName %> SET
+		UPDATE <% =Builder.TableName %> SET
 			<% 	for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
 					ColumnInfo c = Builder.NonPkColumns[i]; 	%>
 			<% 		if (i > 0) { %>,<% } %> <% =c.ResultColumnName %> = #<% =c.VarName %>#
@@ -157,7 +157,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 	</update>
 
 	<delete id="<% =Builder.DeleteStmtId %>" parameterClass="<% =Builder.EntityName %>">
-		DELETE FROM <% =Builder.QualifiedTableName %>
+		DELETE FROM <% =Builder.TableName %>
 		WHERE
 			<%	for (int i = 0; i < Builder.PkColumns.Count; i++) {
 					ColumnInfo c = Builder.PkColumns[i];	%>
@@ -168,7 +168,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 	<%	if (Builder.DaoMethodSetOption.DeleteByOption.GenerateImpl) { %>
 	<% 		foreach (ColumnInfo c in Builder.FinderColumns ) { %>
 	<delete id="<% =Builder.DeleteByStmtId(c) %>" parameterClass="<% =c.SqlParameterClass %>">
-		DELETE FROM <% =Builder.QualifiedTableName %> WHERE (<% =c.ResultColumnName %> = #value#)
+		DELETE FROM <% =Builder.TableName %> WHERE (<% =c.ResultColumnName %> = #value#)
 	</delete>
 	<% 		} //end for %>
 	<% 	} //end if%>
@@ -180,7 +180,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 				ColumnInfo c1 = Builder.Columns[i];%>
 			<% 	if (i > 0) { %>, <% } %><% 	=c1.ResultColumnName %>
 <% 				} %>
-		FROM <% =Builder.QualifiedTableName %>
+		FROM <% =Builder.TableName %>
 		WHERE <% 	for (int i = 0; i < Builder.PkColumns.Count; i++) { 
 						ColumnInfo c = Builder.PkColumns[i]; 
 			 			if (i > 0) { %>AND <% } %>(<% =c.ResultColumnName %> = #<% =c.VarName %>#)

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -1141,7 +1141,7 @@ namespace CSBatisBuilder {
 
         #region QuotedStr
 
-        public String QuotedStr(String s) { return "[" + s + "]"; }
+        public String QuotedStr(String s) { return "" + s + ""; }
 
         #endregion
 
@@ -1221,7 +1221,7 @@ namespace CSBatisBuilder {
                 case (int)DbType.Single: return SqlDbType.Real;
                 case (int)DbType.String: return SqlDbType.NVarChar;
                 case (int)DbType.StringFixedLength: return SqlDbType.NChar;
-                //case DbType.Time: return SqlDbType.DateTime;
+                case (int)DbType.Time: return SqlDbType.DateTime;
                 //case DbType.UInt16: return SqlDbType;
                 //case DbType.UInt32: return SqlDbType;
                 //case DbType.UInt64: return SqlDbType;
@@ -1244,6 +1244,7 @@ namespace CSBatisBuilder {
                 case SqlDbType.Char: return typeof(String);
 				case SqlDbType.Date: return typeof(DateTime);
                 case SqlDbType.DateTime: return typeof(DateTime);
+                case SqlDbType.Time: return typeof(DateTime);
                 case SqlDbType.Decimal: return typeof(Decimal);
                 case SqlDbType.Float: return typeof(Double);
                 case SqlDbType.Image: return typeof(Byte[]);
