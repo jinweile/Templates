@@ -125,21 +125,29 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 	<% 	} //end if%>
 	
 	<insert id="<% =Builder.InsertStmtId %>" parameterClass="<% =Builder.EntityName %>">
+        <!--oracle-->
+        <!--<selectKey keyProperty="innerUserID" resultType="Long" order="BEFORE">
+          select SQ_ADMIN_SEQ.nextval from dual
+        </selectKey>-->
 		INSERT INTO <% =Builder.TableName %> (
 			<%
-			    	for (int i = 0; i < Builder.Columns.Count; i++) { 
-					ColumnInfo c = Builder.Columns[i]; %>
+			    	for (int i = 0; i < Builder.NonPkColumns.Count; i++) { 
+					ColumnInfo c = Builder.NonPkColumns[i]; %>
 			<% 		if (i > 0) { %>,<% } %> <% =c.ResultColumnName %>
 			<% 	} %>
 		) VALUES (
-			<% 	for (int i = 0; i < Builder.Columns.Count; i++) {
-					ColumnInfo c = Builder.Columns[i];		%>
+			<% 	for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+					ColumnInfo c = Builder.NonPkColumns[i];		%>
 			<% 		if (i > 0) { %>,<% } %> #<% =c.VarName %>#
 			<% 	} %>
 		)
 		<selectKey resultClass="<% =Builder.PkColumns[0].ClrTypeDecl%>" keyProperty="<% =Builder.PkColumns[0].VarName%>" >
+            <!--sqlite-->
+            select last_insert_rowid() as value
+            <!--mysql-->
 			<!--select LAST_INSERT_ID() as value-->
-			select @@identity as value
+            <!--sqlserver-->
+			<!--select @@identity as value-->
 		</selectKey>
 	</insert>
 
