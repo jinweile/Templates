@@ -72,7 +72,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 	
 	<select id="<% =Builder.FindStmtId %>" parameterClass="<% =Builder.PkColumns[0].ClrTypeDecl%>" resultMap="<% =Builder.FullResultMapId %>">
 		SELECT
-<%				for (int i = 0; i < Builder.NonLobColumns.Count; i ++) {
+<%				for (int i = 0; i < Builder.Columns.Count; i ++) {
 				ColumnInfo c = Builder.Columns[i];%>
 			<% 	if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
 <% 				} %>
@@ -87,7 +87,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 	<select id="<% =Builder.FindNonLobStmtId %>" parameterClass="<% =Builder.EntityName %>" resultMap="<% =Builder.NonLobResultMapId %>">
 		SELECT
 <%				for (int i = 0; i < Builder.NonLobColumns.Count; i ++) {
-				ColumnInfo c = Builder.Columns[i];%>
+				ColumnInfo c = Builder.NonLobColumns[i];%>
 			<% 	if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
 <% 				} %>
 		FROM <% =Builder.TableName %>
@@ -103,7 +103,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 	<% 		foreach (ColumnInfo c in Builder.FinderColumns ) { %>
 	<select id="<% =Builder.FindByStmtId(c) %>" parameterClass="<% =c.SqlParameterClass %>" resultMap="<% =Builder.FullResultMapId %>">
 		SELECT
-<%				for (int i = 0; i < Builder.NonLobColumns.Count; i ++) {
+<%				for (int i = 0; i < Builder.Columns.Count; i ++) {
 				ColumnInfo c1 = Builder.Columns[i];%>
 			<% 	if (i > 0) { %>, <% } %><% 	=c1.ResultColumnName %>
 <% 				} %>
@@ -114,7 +114,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 	<select id="<% =Builder.FindNonLobByStmtId(c) %>" parameterClass="<% =c.SqlParameterClass %>" resultMap="<% =Builder.NonLobResultMapId %>">
 		SELECT
 <%				for (int i = 0; i < Builder.NonLobColumns.Count; i ++) {
-				ColumnInfo c1 = Builder.Columns[i];%>
+				ColumnInfo c1 = Builder.NonLobColumns[i];%>
 			<% 	if (i > 0) { %>, <% } %><% 	=c1.ResultColumnName %>
 <% 				} %>
 		FROM <% =Builder.TableName %>
@@ -184,7 +184,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 	<% 	if (Builder.DaoMethodSetOption.ReloadOption.GenerateImpl) { %>
 	<select id="<% =Builder.ReloadStmtId %>" parameterClass="<% =Builder.EntityName %>" resultMap="<% =Builder.FullResultMapId %>">
 		SELECT
-<%				for (int i = 0; i < Builder.NonLobColumns.Count; i ++) {
+<%				for (int i = 0; i < Builder.Columns.Count; i ++) {
 				ColumnInfo c1 = Builder.Columns[i];%>
 			<% 	if (i > 0) { %>, <% } %><% 	=c1.ResultColumnName %>
 <% 				} %>
