@@ -1,0 +1,198 @@
+﻿<%-- 
+Name:	IBatisNetGen.BatisMap.cst
+Version: 2007.02.08
+Author: Yaojian  ( smrtk@hotmail.com )
+Description: Generates SQL mapping xml for IBatis.Net (see ibatis.apache.org)
+--%>
+<%@ CodeTemplate Language="C#" TargetLanguage="C#" Src="CSBatisBuilder.cs" Inherits="TableTemplate" Debug="true"  Description="Generates IBatis map from a database table." %>
+
+<%@ Assembly Name="System" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Assembly Name="CodeSmith.BaseTemplates" %>
+<%@ Assembly Name="CodeSmith.CustomProperties" %>
+<%@ Assembly Name="SchemaExplorer" %>
+
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.ComponentModel" %>
+<%@ Import Namespace="System.Collections.Specialized" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Import Namespace="System.Text" %>
+<%@ Import Namespace="CSBatisBuilder" %>
+<script runat="template">
+	protected override FileOption GetDefaultFileOption() {
+		return FileSetOption.CreateDefaultBatisMapOption();
+	}
+</script>
+<?xml version="1.0" encoding="utf-8" ?> 
+<!--============================================================================
+//	CAUTION: This file is generated  at <% =CodeTemplateInfo.DateCreated %>
+//===========================================================================-->
+<sqlMap namespace="<% =Builder.DaoImplNamespace %>.<% =Builder.EntityName %>"
+	xmlns="http://ibatis.apache.org/mapping" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<alias>
+		<typeAlias alias="<% =Builder.EntityName %>" type="<% =Builder.EntityQualifiedName %>, <% =Builder.EntityNamespace %>" />
+	</alias>
+
+	<resultMaps>
+		<resultMap id="<% =Builder.FullResultMapId %>" class="<% =Builder.EntityName%>">
+			<% foreach (ColumnInfo c in Builder.Columns) { %>
+			<result property="<% =c.PropName %>" column="<% =c.ResultColumnName %>" dbType="<% =c.ProviderDbTypeName %>"/>
+			<% } %>
+		</resultMap>
+		<% if (Builder.HasLob) { %>
+		<resultMap id="<% =Builder.NonLobResultMapId %>" class="<% =Builder.EntityName%>">
+			<% foreach (ColumnInfo c in Builder.NonLobColumns) { %>
+			<result property="<% =c.PropName %>" column="<% =c.ResultColumnName %>" dbType="<% =c.ProviderDbTypeName %>"/>
+			<% } %>
+		</resultMap>
+		<% } %>
+	</resultMaps>
+	
+	<statements>
+
+		<select id="<% =Builder.GetCountStmtId %>" resultClass="System.Int32">
+			SELECT count(*) FROM <% =Builder.QualifiedTableName %>
+		</select>
+		
+		<select id="<% =Builder.FindAllStmtId %>" resultMap="<% =Builder.FullResultMapId %>">
+			SELECT * 
+			FROM <% =Builder.QualifiedTableName %>
+		</select>
+		<% if (Builder.HasLob) { %>
+		<select id="<% =Builder.FindNonLobAllStmtId %>" resultMap="<% =Builder.NonLobResultMapId %>">
+			SELECT
+<%				for (int i = 0; i < Builder.NonLobColumns.Count; i ++) {
+					ColumnInfo c = Builder.NonLobColumns[i];%>
+				<% 	if (i > 0) { %>, <% } %><% 	=c.SqlQualifiedColumnName %>
+<% 				} %>
+			FROM <% =Builder.QualifiedTableName %>
+		</select>
+		<% } %>
+		
+		<select id="<% =Builder.FindStmtId %>" parameterClass="<% =Builder.EntityName %>" resultMap="<% =Builder.FullResultMapId %>" extends="<% =Builder.FindAllStmtId %>">
+			WHERE
+				<% 	for (int i = 0; i < Builder.PkColumns.Count; i++) { 
+						ColumnInfo c = Builder.PkColumns[i]; %>
+				<% 		if (i > 0) { %>AND <% } %>(<% =c.SqlQualifiedColumnName %> = #<% =c.SqlInlineParameterMap %>#)
+				<% 	} %>
+		</select>
+		<%	if (Builder.HasLob && Builder.DaoMethodSetOption.FindNonLobOption.GenerateImpl) { %>
+		<select id="<% =Builder.FindNonLobStmtId %>" parameterClass="<% =Builder.EntityName %>" resultMap="<% =Builder.NonLobResultMapId %>" extends="<% =Builder.FindNonLobAllStmtId %>">
+			WHERE
+				<% 	for (int i = 0; i < Builder.PkColumns.Count; i++) { 
+						ColumnInfo c = Builder.PkColumns[i]; %>
+				<% 		if (i > 0) { %>AND <% } %>(<% =c.SqlQualifiedColumnName %> = #<% =c.SqlInlineParameterMap %>#)
+				<% 	} %>
+		</select>
+		<%	} %>
+		
+		<%	if (Builder.DaoMethodSetOption.FindByOption.GenerateImpl) { %>
+		<% 		foreach (ColumnInfo c in Builder.FinderColumns ) { %>
+		<select id="<% =Builder.FindByStmtId(c) %>" parameterClass="<% =c.SqlParameterClass %>" resultMap="<% =Builder.FullResultMapId %>" extends="<% =Builder.FindAllStmtId %>">
+			WHERE (<% =c.SqlQualifiedColumnName %> = #value#)
+		</select>
+		<% if (Builder.HasLob) { %>
+		<select id="<% =Builder.FindNonLobByStmtId(c) %>" parameterClass="<% =c.SqlParameterClass %>" resultMap="<% =Builder.NonLobResultMapId %>" extends="<% =Builder.FindNonLobAllStmtId %>">
+			WHERE (<% =c.SqlQualifiedColumnName %> = #value#)
+		</select>
+		<% } %>
+		<% 		} //end for %>
+		<% 	} //end if%>
+		
+		<insert id="<% =Builder.InsertStmtId %>" parameterClass="<% =Builder.EntityName %>">
+			INSERT INTO <% =Builder.QualifiedTableName %> (
+				<%
+				    	for (int i = 0; i < Builder.NonPkColumns.Count; i++) { 
+						ColumnInfo c = Builder.NonPkColumns[i]; %>
+				<% 		if (i > 0) { %>,<% } %> <% =c.SqlColumnName %>
+				<% 	} %>
+			) VALUES (
+				<% 	for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+						ColumnInfo c = Builder.NonPkColumns[i];		%>
+				<% 		if (i > 0) { %>,<% } %> #<% =c.SqlInlineParameterMap %>#
+				<% 	} %>
+			)
+			<selectKey resultClass="<% =Builder.PkColumns[0].ClrTypeDecl%>" type="post" property="<% =Builder.PkColumns[0].PropName%>" >
+				select @@identity as value
+			</selectKey>
+		</insert>
+
+		<update id="<% =Builder.UpdateStmtId %>" parameterClass="<% =Builder.EntityName %>">
+			UPDATE <% =Builder.QualifiedTableName %> SET
+				<% 	for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+						ColumnInfo c = Builder.NonPkColumns[i]; 	%>
+				<% 		if (i > 0) { %>,<% } %> <% =c.SqlColumnName %> = #<% =c.SqlInlineParameterMap %>#
+				<% 	} %>
+			WHERE
+				<% 	for (int i = 0; i < Builder.PkColumns.Count; i++) {
+						ColumnInfo c = Builder.PkColumns[i];	%>
+				<% 		if (i > 0) { %>AND <% } %>(<% =c.SqlColumnName %> = #<% =c.SqlInlineParameterMap %>#)
+				<% 	} %>
+		</update>
+        <update id="<% =Builder.UpdateStmtId %>Dynamic" parameterClass="<% =Builder.EntityName %>">
+			UPDATE <% =Builder.QualifiedTableName %> 
+            <dynamic prepend="SET">
+				<% 	for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+						ColumnInfo c = Builder.NonPkColumns[i]; 	%>
+                <isNotNull prepend="," property="<% =c.PropName %>"><% =c.SqlColumnName %> = #<% =c.SqlInlineParameterMap %>#</isNotNull>
+				<% 	} %>
+            </dynamic>
+			WHERE
+				<% 	for (int i = 0; i < Builder.PkColumns.Count; i++) {
+						ColumnInfo c = Builder.PkColumns[i];	%>
+				<% 		if (i > 0) { %>AND <% } %>(<% =c.SqlColumnName %> = #<% =c.SqlInlineParameterMap %>#)
+				<% 	} %>
+		</update>
+
+		<delete id="<% =Builder.DeleteStmtId %>" parameterClass="<% =Builder.EntityName %>">
+			DELETE FROM <% =Builder.QualifiedTableName %>
+			WHERE
+				<%	for (int i = 0; i < Builder.PkColumns.Count; i++) {
+						ColumnInfo c = Builder.PkColumns[i];	%>
+				<%		if (i > 0) { %>AND <% } %>(<% =c.SqlColumnName %> = #<% =c.SqlInlineParameterMap %>#)
+				<%	} %>
+		</delete>
+
+		<%	if (Builder.DaoMethodSetOption.DeleteByOption.GenerateImpl) { %>
+		<% 		foreach (ColumnInfo c in Builder.FinderColumns ) { %>
+		<delete id="<% =Builder.DeleteByStmtId(c) %>" parameterClass="<% =c.SqlParameterClass %>">
+			DELETE FROM <% =Builder.QualifiedTableName %> WHERE (<% =c.SqlColumnName %> = #value#)
+		</delete>
+		<% 		} //end for %>
+		<% 	} //end if%>
+		
+		<% 	if (Builder.DaoMethodSetOption.ReloadOption.GenerateImpl) { %>
+		<select id="<% =Builder.ReloadStmtId %>" parameterClass="<% =Builder.EntityName %>" resultMap="<% =Builder.FullResultMapId %>" extends="<% =Builder.FindAllStmtId %>">
+			WHERE <% 	for (int i = 0; i < Builder.PkColumns.Count; i++) { 
+							ColumnInfo c = Builder.PkColumns[i]; 
+				 			if (i > 0) { %>AND <% } %>(<% =c.SqlQualifiedColumnName %> = #<% =c.SqlInlineParameterMap %>#)
+				<% 		} %>
+		</select>
+		<% 	} %>
+		
+		    <select id="<% =Builder.SelectStmtId %>Dynamic"  parameterClass="map"  resultMap="<% =Builder.FullResultMapId %>">
+    	   SELECT
+                  <isPropertyAvailable property="Top">
+                    Top $Top$
+                  </isPropertyAvailable>
+    <%				for (int i = 0; i < Builder.NonLobColumns.Count; i ++) {
+    				ColumnInfo c = Builder.NonLobColumns[i];%>
+    			<% 	if (i > 0) { %>, <% } %><% 	=c.SqlQualifiedColumnName %>
+    <% 				} %>
+    		FROM <% =Builder.QualifiedTableName %>
+         <dynamic prepend="WHERE">
+    		<% 	for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+    		ColumnInfo c = Builder.NonPkColumns[i]; %>
+    		        <isPropertyAvailable property="<% =c.PropName %>" prepend="and">
+    				  <% =c.SqlColumnName %> = #<% =c.SqlInlineParameterMap %>#
+    				</isPropertyAvailable>
+    		<% 	} %>
+         </dynamic>
+             <isPropertyAvailable property="OrderBy">
+                ORDER BY $OrderBy$
+             </isPropertyAvailable>
+    </select>  
+	</statements>
+</sqlMap>

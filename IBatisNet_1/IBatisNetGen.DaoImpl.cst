@@ -1,0 +1,178 @@
+﻿<%-- 
+Name:	IBatisNetGen.DaoImpl.cst
+Version: 2007.02.08
+Author: Yaojian  ( smrtk@hotmail.com )
+Description: Generates the data access interface for IBatis.Net (see ibatis.apache.org)
+--%>
+<%@ CodeTemplate Language="C#" TargetLanguage="C#" Src="CSBatisBuilder.cs" Inherits="TableTemplate" Debug="true"  Description="Generates IBatis map and data class from a database table." %>
+
+<%@ Assembly Name="System" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Assembly Name="CodeSmith.BaseTemplates" %>
+<%@ Assembly Name="CodeSmith.CustomProperties" %>
+<%@ Assembly Name="SchemaExplorer" %>
+
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.ComponentModel" %>
+<%@ Import Namespace="System.Collections.Specialized" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Import Namespace="System.Text" %>
+<%@ Import Namespace="CSBatisBuilder" %>
+<script runat="template">
+	protected override FileOption GetDefaultFileOption() {
+		return FileSetOption.CreateDefaultDaoImplOption();
+	}
+</script>
+//==============================================================================
+//	CAUTION: This file is generated  at <% =CodeTemplateInfo.DateCreated %>
+//==============================================================================
+using System;
+using System.Collections;
+using System.Collections.Generic;
+<%	if (Builder.EntityNamespace != Builder.DaoImplNamespace) { %>
+using <% =Builder.EntityNamespace %>;
+<%	} %>
+
+
+namespace <% =Builder.DaoImplNamespace %> {
+	
+    public <% =Builder.DaoImplPartialDecl %>class <% =Builder.DaoImplName %> {
+
+ private static string GetMapName(string name)
+        {
+            return string.Format("{0}.{1}.{2}", Mapper.FrameworkMap, "<% =Builder.EntityName %>", name);
+        }
+
+<%	//GetCount
+	if (Builder.DaoMethodSetOption.GetCountOption.GenerateImpl) { %>
+		public static int <% =Builder.GetCountMethod %>() {
+			string mapper = GetMapName( "<% =Builder.GetCountStmtId %>");
+			int result = <% =Builder.SqlMapper %>.QueryForObject<int>(mapper, null);
+			return result;
+		}
+
+<%	} %>
+<%	//Find
+	if (Builder.DaoMethodSetOption.FindOption.GenerateImpl) { %>
+		public static <% =Builder.EntityName %> <% =Builder.FindMethod %>(<% =Builder.GetClrParamsDecl(Builder.PkColumns) %>) {
+			string mapper = GetMapName( "<% =Builder.FindStmtId %>");
+			<% =Builder.EntityName %> result = <% =Builder.SqlMapper %>.QueryForObject<<% =Builder.EntityName %>>(mapper, <% =Builder.GetClrParamNames(Builder.PkColumns) %>);
+			return result;
+		}
+
+<%	} //if %>
+
+        public static IList<<% =Builder.EntityName %>> SelectDynamic(IDictionary param)
+           {
+               string mapper = GetMapName( "<% =Builder.SelectStmtId %>Dynamic");
+               return <% =Builder.SqlMapper %>.QueryForList<<% =Builder.EntityName %>>(mapper, param);
+           }
+		   
+
+<%	//QuickFind
+	if (Builder.HasLob && Builder.DaoMethodSetOption.FindNonLobOption.GenerateImpl) { %>
+		public static <% =Builder.EntityName %> <% =Builder.FindNonLobMethod %>(<% =Builder.GetClrParamsDecl(Builder.PkColumns) %>) {
+			string mapper = GetMapName( "<% =Builder.FindNonLobStmtId %>");
+			<% =Builder.EntityName %> result = <% =Builder.SqlMapper %>.QueryForObject<<% =Builder.EntityName %>>(mapper, <% =Builder.GetClrParamNames(Builder.PkColumns) %>);
+			return result;
+		}
+		
+<%	} //if %>
+<%	//FindAll
+	if (Builder.DaoMethodSetOption.FindAllOption.GenerateIntf) { %>
+		public static IList<<% =Builder.EntityName %>> <% =Builder.FindAllMethod %>() {
+			string mapper = GetMapName( "<% =Builder.FindAllStmtId %>");
+			IList<<% =Builder.EntityName %>> result = <% =Builder.SqlMapper %>.QueryForList<<% =Builder.EntityName %>>(mapper, null);
+			return result;
+		}
+		
+<%	} //if %>
+<%	//QuickFindAll
+	if (Builder.HasLob && Builder.DaoMethodSetOption.FindNonLobAllOption.GenerateIntf) { %>
+		public static IList<<% =Builder.EntityName %>> <% =Builder.FindNonLobAllMethod %>() {
+			string mapper = GetMapName( "<% =Builder.FindNonLobAllStmtId %>");
+			IList<<% =Builder.EntityName %>> result = <% =Builder.SqlMapper %>.QueryForList<<% =Builder.EntityName %>>(mapper, null);
+			return result;
+		}
+		
+<%	} //if %>
+<%	//FindBy, QuickFindBy
+	foreach (ColumnInfo c in Builder.FinderColumns) { 
+		//FindBy
+		if (Builder.DaoMethodSetOption.FindByOption.GenerateImpl) { %>
+		public static IList<<% =Builder.EntityName %>> <% =Builder.FindByMethod(c) %>(<% =c.ClrParamDecl %>) {
+			string mapper = GetMapName( "<% =Builder.FindByStmtId(c) %>");
+			IList<<% =Builder.EntityName %>> result = <% =Builder.SqlMapper %>.QueryForList<<% =Builder.EntityName %>>(mapper, <% =c.ClrParamName %>);
+			return result;
+		}
+		
+<%		} //if	%>
+<%		//QuickFindBy
+		if (Builder.HasLob && Builder.DaoMethodSetOption.FindNonLobByOption.GenerateImpl) { %>
+		public static IList<<% =Builder.EntityName %>> <% =Builder.FindNonLobByMethod(c) %>(<% =c.ClrParamDecl %>) {
+			string mapper = GetMapName( "<% =Builder.FindNonLobByStmtId(c) %>");
+			IList<<% =Builder.EntityName %>> result = <% =Builder.SqlMapper %>.QueryForList<<% =Builder.EntityName %>>(mapper, <% =c.ClrParamName %>);
+			return result;
+		}
+		
+<%		} //if	
+	} //foreach %>
+<%	//Insert
+	if (Builder.DaoMethodSetOption.InsertOption.GenerateImpl) { %>
+		public static <% =Builder.PkColumns[0].ClrTypeDecl%> <% =Builder.InsertMethod %>(<% =Builder.EntityName %> model) {
+			if (model == null) throw new ArgumentNullException("model");
+			string mapper = GetMapName( "<% =Builder.InsertStmtId %>");
+			return (<% =Builder.PkColumns[0].ClrTypeDecl%>)<% =Builder.SqlMapper %>.Insert(mapper, model);
+		}
+		
+<%	} //if %>
+<%	//Update
+	if (Builder.DaoMethodSetOption.UpdateOption.GenerateImpl) { %>
+		public static int <% =Builder.UpdateMethod %>(<% =Builder.EntityName %> model) {
+			if (model == null) throw new ArgumentNullException("model");
+			string mapper = GetMapName( "<% =Builder.UpdateStmtId %>");
+			return <% =Builder.SqlMapper %>.Update(mapper, model);
+		}
+		
+<%	} //if %>
+<%	//UpdateDynamic
+	if (Builder.DaoMethodSetOption.UpdateOption.GenerateImpl) { %>
+		public static int <% =Builder.UpdateMethod %>Dynamic(<% =Builder.EntityName %> model) {
+			if (model == null) throw new ArgumentNullException("model");
+			string mapper = GetMapName( "<% =Builder.UpdateStmtId %>Dynamic");
+			return <% =Builder.SqlMapper %>.Update(mapper, model);
+		}
+		
+<%	} //if %>
+<%	//Delete
+	if (Builder.DaoMethodSetOption.DeleteOption.GenerateImpl) { %>
+		public static int <% =Builder.DeleteMethod %>(<% =Builder.EntityName %> model) {
+			if (model == null) throw new ArgumentNullException("model");
+			string mapper = GetMapName( "<% =Builder.DeleteStmtId %>");
+			return <% =Builder.SqlMapper %>.Delete(mapper, model);
+		}
+		
+<%	} //if %>
+<%  //DeleteBy
+	if (Builder.DaoMethodSetOption.DeleteByOption.GenerateImpl) { %>
+<%		foreach (ColumnInfo c in Builder.FinderColumns) { %>
+		public static int <% =Builder.DeleteByMethod(c) %>(<% =c.ClrParamDecl %>) {
+			string mapper = GetMapName( "<% =Builder.DeleteByStmtId(c) %>");
+			int result = <% =Builder.SqlMapper %>.Delete(mapper, <% =c.ClrParamName %>);
+			return result;
+		}
+		
+<%		} //foreach %>
+<%	} //if %>
+<%	//Reload
+	if (Builder.DaoMethodSetOption.ReloadOption.GenerateImpl) { %>
+		public static void <% =Builder.ReloadMethod %>(<% =Builder.EntityName %> model) {
+			if (model == null) throw new ArgumentNullException("model");
+			string mapper = GetMapName( "<% =Builder.FindStmtId %>");
+			<% =Builder.SqlMapper %>.QueryForObject<<% =Builder.EntityName %>>(mapper, model, model);
+		}
+		
+<%	} //if %>
+	}
+
+}
