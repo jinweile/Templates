@@ -1,0 +1,199 @@
+﻿<%-- 
+Name:	IBatisGen.BatisMap.cst
+Version: 2007.02.08
+Author: jinwl  ( jinweile@163.com )
+Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
+--%>
+<%@ CodeTemplate Language="C#" TargetLanguage="C#" Src="CSBatisBuilder.cs" Inherits="TableTemplate" Debug="true"  Description="Generates IBatis map from a database table." %>
+
+<%@ Assembly Name="System" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Assembly Name="CodeSmith.BaseTemplates" %>
+<%@ Assembly Name="CodeSmith.CustomProperties" %>
+<%@ Assembly Name="SchemaExplorer" %>
+<%--<%@ Assembly Src="CSBatisBuilder.cs" %>--%>
+
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.ComponentModel" %>
+<%@ Import Namespace="System.Collections.Specialized" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Import Namespace="System.Text" %>
+<%@ Import Namespace="CSBatisBuilder" %>
+<script runat="template">
+	protected override FileOption GetDefaultFileOption() {
+		return FileSetOption.CreateDefaultBatisMapOption();
+	}
+</script>
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+	
+<sqlMap namespace="<% =Builder.EntityName %>">
+
+	<typeAlias alias="<% =Builder.EntityName %>" type="<% =Builder.EntityQualifiedName %>" />
+
+	<resultMap id="<% =Builder.FullResultMapId %>" class="<% =Builder.EntityName%>">
+		<% foreach (ColumnInfo c in Builder.Columns) { %>
+		<result property="<% =c.VarName %>" column="<% =c.ResultColumnName %>"/>
+		<% } %>
+	</resultMap>
+	<% if (Builder.HasLob) { %>
+	<resultMap id="<% =Builder.NonLobResultMapId %>" class="<% =Builder.EntityName%>">
+		<% foreach (ColumnInfo c in Builder.NonLobColumns) { %>
+		<result property="<% =c.VarName %>" column="<% =c.ResultColumnName %>"/>
+		<% } %>
+	</resultMap>
+	<% } %>
+
+	<select id="<% =Builder.GetCountStmtId %>" resultClass="Integer">
+		SELECT count(1) FROM <% =Builder.TableName %>
+	</select>
+	
+	<select id="<% =Builder.FindAllStmtId %>" resultMap="<% =Builder.FullResultMapId %>">
+		SELECT
+<%				for (int i = 0; i < Builder.Columns.Count; i ++) {
+				ColumnInfo c = Builder.Columns[i];%>
+			<% 	if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
+<% 				} %>
+		FROM <% =Builder.TableName %>
+	</select>
+	<% if (Builder.HasLob) { %>
+	<select id="<% =Builder.FindNonLobAllStmtId %>" resultMap="<% =Builder.NonLobResultMapId %>">
+		SELECT
+<%				for (int i = 0; i < Builder.NonLobColumns.Count; i ++) {
+				ColumnInfo c = Builder.NonLobColumns[i];%>
+			<% 	if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
+<% 				} %>
+		FROM <% =Builder.TableName %>
+	</select>
+	<% } %>
+	
+	<select id="<% =Builder.FindStmtId %>" parameterClass="<% =Builder.PkColumns[0].ClrTypeDecl%>" resultMap="<% =Builder.FullResultMapId %>">
+		SELECT
+<%				for (int i = 0; i < Builder.Columns.Count; i ++) {
+				ColumnInfo c = Builder.Columns[i];%>
+			<% 	if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
+<% 				} %>
+		FROM <% =Builder.TableName %>
+		WHERE
+			<% 	for (int i = 0; i < Builder.PkColumns.Count; i++) { 
+					ColumnInfo c = Builder.PkColumns[i]; %>
+			<% 		if (i > 0) { %>AND <% } %>(<% =c.ResultColumnName %> = #<% =c.VarName %>#)
+			<% 	} %>
+	</select>
+	<%	if (Builder.HasLob && Builder.DaoMethodSetOption.FindNonLobOption.GenerateImpl) { %>
+	<select id="<% =Builder.FindNonLobStmtId %>" parameterClass="<% =Builder.EntityName %>" resultMap="<% =Builder.NonLobResultMapId %>">
+		SELECT
+<%				for (int i = 0; i < Builder.NonLobColumns.Count; i ++) {
+				ColumnInfo c = Builder.NonLobColumns[i];%>
+			<% 	if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
+<% 				} %>
+		FROM <% =Builder.TableName %>
+		WHERE
+			<% 	for (int i = 0; i < Builder.PkColumns.Count; i++) { 
+					ColumnInfo c = Builder.PkColumns[i]; %>
+			<% 		if (i > 0) { %>AND <% } %>(<% =c.ResultColumnName %> = #<% =c.VarName %>#)
+			<% 	} %>
+	</select>
+	<%	} %>
+	
+	<%	if (Builder.DaoMethodSetOption.FindByOption.GenerateImpl) { %>
+	<% 		foreach (ColumnInfo c in Builder.FinderColumns ) { %>
+	<select id="<% =Builder.FindByStmtId(c) %>" parameterClass="<% =c.SqlParameterClass %>" resultMap="<% =Builder.FullResultMapId %>">
+		SELECT
+<%				for (int i = 0; i < Builder.Columns.Count; i ++) {
+				ColumnInfo c1 = Builder.Columns[i];%>
+			<% 	if (i > 0) { %>, <% } %><% 	=c1.ResultColumnName %>
+<% 				} %>
+		FROM <% =Builder.TableName %>
+		WHERE (<% =c.ResultColumnName %> = #value#)
+	</select>
+	<% if (Builder.HasLob) { %>
+	<select id="<% =Builder.FindNonLobByStmtId(c) %>" parameterClass="<% =c.SqlParameterClass %>" resultMap="<% =Builder.NonLobResultMapId %>">
+		SELECT
+<%				for (int i = 0; i < Builder.NonLobColumns.Count; i ++) {
+				ColumnInfo c1 = Builder.NonLobColumns[i];%>
+			<% 	if (i > 0) { %>, <% } %><% 	=c1.ResultColumnName %>
+<% 				} %>
+		FROM <% =Builder.TableName %>
+		WHERE (<% =c.ResultColumnName %> = #value#)
+	</select>
+	<% } %>
+	<% 		} //end for %>
+	<% 	} //end if%>
+	
+	<insert id="<% =Builder.InsertStmtId %>" parameterClass="<% =Builder.EntityName %>">
+        <!--oracle-->
+        <!--<selectKey keyProperty="innerUserID" resultType="Long" order="BEFORE">
+          select SQ_ADMIN_SEQ.nextval from dual
+        </selectKey>-->
+		INSERT INTO <% =Builder.TableName %> (
+			<%
+			    	for (int i = 0; i < Builder.NonPkColumns.Count; i++) { 
+					ColumnInfo c = Builder.NonPkColumns[i]; %>
+			<% 		if (i > 0) { %>,<% } %> <% =c.ResultColumnName %>
+			<% 	} %>
+		) VALUES (
+			<% 	for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+					ColumnInfo c = Builder.NonPkColumns[i];		%>
+			<% 		if (i > 0) { %>,<% } %> #<% =c.VarName %>#
+			<% 	} %>
+		)
+		<selectKey resultClass="<% =Builder.PkColumns[0].ClrTypeDecl%>" keyProperty="<% =Builder.PkColumns[0].VarName%>" >
+            <!--sqlite-->
+            <!--select last_insert_rowid() as value-->
+            <!--mysql-->
+			select LAST_INSERT_ID() as value
+            <!--sqlserver-->
+			<!--select @@identity as value-->
+		</selectKey>
+	</insert>
+
+	<update id="<% =Builder.UpdateStmtId %>" parameterClass="<% =Builder.EntityName %>">
+		UPDATE <% =Builder.TableName %> SET
+			<% 	for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+					ColumnInfo c = Builder.NonPkColumns[i]; 	%>
+			<% 		if (i > 0) { %>,<% } %> <% =c.ResultColumnName %> = #<% =c.VarName %>#
+			<% 	} %>
+		WHERE
+			<% 	for (int i = 0; i < Builder.PkColumns.Count; i++) {
+					ColumnInfo c = Builder.PkColumns[i];	%>
+			<% 		if (i > 0) { %>AND <% } %>(<% =c.ResultColumnName %> = #<% =c.VarName %>#)
+			<% 	} %>
+	</update>
+
+	<delete id="<% =Builder.DeleteStmtId %>" parameterClass="<% =Builder.EntityName %>">
+		DELETE FROM <% =Builder.TableName %>
+		WHERE
+			<%	for (int i = 0; i < Builder.PkColumns.Count; i++) {
+					ColumnInfo c = Builder.PkColumns[i];	%>
+			<%		if (i > 0) { %>AND <% } %>(<% =c.ResultColumnName %> = #<% =c.VarName %>#)
+			<%	} %>
+	</delete>
+
+	<%	if (Builder.DaoMethodSetOption.DeleteByOption.GenerateImpl) { %>
+	<% 		foreach (ColumnInfo c in Builder.FinderColumns ) { %>
+	<delete id="<% =Builder.DeleteByStmtId(c) %>" parameterClass="<% =c.SqlParameterClass %>">
+		DELETE FROM <% =Builder.TableName %> WHERE (<% =c.ResultColumnName %> = #value#)
+	</delete>
+	<% 		} //end for %>
+	<% 	} //end if%>
+	
+	<% 	if (Builder.DaoMethodSetOption.ReloadOption.GenerateImpl) { %>
+	<select id="<% =Builder.ReloadStmtId %>" parameterClass="<% =Builder.EntityName %>" resultMap="<% =Builder.FullResultMapId %>">
+		SELECT
+<%				for (int i = 0; i < Builder.Columns.Count; i ++) {
+				ColumnInfo c1 = Builder.Columns[i];%>
+			<% 	if (i > 0) { %>, <% } %><% 	=c1.ResultColumnName %>
+<% 				} %>
+		FROM <% =Builder.TableName %>
+		WHERE <% 	for (int i = 0; i < Builder.PkColumns.Count; i++) { 
+						ColumnInfo c = Builder.PkColumns[i]; 
+			 			if (i > 0) { %>AND <% } %>(<% =c.ResultColumnName %> = #<% =c.VarName %>#)
+			<% 		} %>
+	</select>
+	<% 	} %>
+
+</sqlMap>

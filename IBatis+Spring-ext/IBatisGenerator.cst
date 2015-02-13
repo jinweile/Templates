@@ -1,0 +1,125 @@
+﻿<%-- 
+Name:	IBatisNetGen.Database.cst
+Version: 2007.02.08
+Author: jinwl  ( jinweile@163.com )
+Description: Generates SQLMapping/DataClass/DaoIntf/DaoImpl files for IBatis.Net (see ibatis.apache.org)
+--%>
+<%@ CodeTemplate Language="C#" TargetLanguage="C#" Src="CSBatisBuilder.cs" Inherits="DatabaseCompositeTemplate" Debug="true"  Description="Generates IBatis map and data class from a database table." %>
+
+<%@ Assembly Name="System" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Assembly Name="CodeSmith.BaseTemplates" %>
+<%@ Assembly Name="CodeSmith.CustomProperties" %>
+<%@ Assembly Name="SchemaExplorer" %>
+<%--<%@ Assembly Src="CSBatisBuilder.cs" %>--%>
+
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.ComponentModel" %>
+<%@ Import Namespace="System.Collections" %>
+<%@ Import Namespace="System.Collections.Specialized" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Import Namespace="System.Text" %>
+<%@ Import Namespace="CSBatisBuilder" %>
+
+<%@ Register Name="BatisMapTemplate" Template="IBatisNetGen.BatisMap.cst" MergeProperties="False" ExcludeProperties="" %>
+<%@ Register Name="EntityTemplate" Template="IBatisNetGen.Entity.cst" MergeProperties="False" ExcludeProperties="" %>
+<%@ Register Name="DaoIntfTemplate" Template="IBatisNetGen.DaoIntf.cst" MergeProperties="False" ExcludeProperties="" %>
+<%@ Register Name="DaoImplTemplate" Template="IBatisNetGen.DaoImpl.cst" MergeProperties="False" ExcludeProperties="" %>
+<%@ Register Name="BeanTemplate" Template="IBatisNetGen.Bean.cst" MergeProperties="False" ExcludeProperties="" %>
+<%@ Register Name="ServiceIntfTemplate" Template="IBatisNetGen.ServiceIntf.cst" MergeProperties="False" ExcludeProperties="" %>
+<%@ Register Name="ServiceImplTemplate" Template="IBatisNetGen.ServiceImpl.cst" MergeProperties="False" ExcludeProperties="" %>
+<script runat="template">	
+</script>
+<%		
+	BatisMapTemplate batisMap = this.Create<BatisMapTemplate>();
+	EntityTemplate entity = this.Create<EntityTemplate>();
+	DaoIntfTemplate daoIntf = this.Create<DaoIntfTemplate>();
+	DaoImplTemplate daoImpl = this.Create<DaoImplTemplate>();
+	BeanTemplate bean = this.Create<BeanTemplate>();
+	ServiceIntfTemplate serviceIntf = this.Create<ServiceIntfTemplate>();
+	ServiceImplTemplate serviceImpl = this.Create<ServiceImplTemplate>();
+		
+	StringCollection batisMapFileNames = new StringCollection();
+	StringCollection intfNames = new StringCollection();
+	StringCollection implNames = new StringCollection();
+	StringCollection beanNames = new StringCollection();
+	StringCollection sintfNames = new StringCollection();
+	StringCollection simplNames = new StringCollection();
+	
+	foreach (TableSchema table in this.SourceTables) {
+		TableBuilder builder = new TableBuilder(table, this);
+%>
+================================================================================
+==	BatisMap of table <%= table.FullName %>
+================================================================================
+<%		batisMap.Builder = builder;
+		batisMap.FileOption = this.FileSetOption.BatisMapOption;
+		batisMap.Render(this.Response); %>
+
+================================================================================
+==	Entity of table <%= table.FullName %>
+================================================================================
+<%		entity.Builder = builder;
+		entity.FileOption = this.FileSetOption.EntityOption;
+		entity.Render(this.Response); %>
+
+================================================================================
+==	DAO interface of table <%= table.FullName %>
+================================================================================
+<%		daoIntf.Builder = builder;
+		daoIntf.FileOption = this.FileSetOption.DaoIntfOption;
+		daoIntf.Render(this.Response); %>
+
+================================================================================
+==	DAO implementation of table <%= table.FullName %>
+================================================================================
+<%		daoImpl.Builder = builder;
+		daoImpl.FileOption = this.FileSetOption.DaoImplOption;
+		daoImpl.Render(this.Response); %>
+		
+================================================================================
+==	Spring Bean of table <%= table.FullName %>
+================================================================================
+<%		bean.Builder = builder;
+		bean.FileOption = this.FileSetOption.BeanOption;
+		bean.Render(this.Response); %>
+
+================================================================================
+==	Service interface of table <%= table.FullName %>
+================================================================================
+<%		serviceIntf.Builder = builder;
+		serviceIntf.FileOption = this.FileSetOption.ServiceIntfOption;
+		serviceIntf.Render(this.Response); %>
+
+================================================================================
+==	Service implementation of table <%= table.FullName %>
+================================================================================
+<%		serviceImpl.Builder = builder;
+		serviceImpl.FileOption = this.FileSetOption.ServiceImplOption;
+		serviceImpl.Render(this.Response); %>
+		
+<%
+		batisMapFileNames.Add(batisMap.FileName);
+		intfNames.Add(daoIntf.Builder.DaoIntfName);
+		implNames.Add(daoImpl.Builder.DaoImplName);
+		beanNames.Add(bean.FileName);
+		sintfNames.Add(serviceIntf.Builder.ServiceIntfName);
+		simplNames.Add(serviceImpl.Builder.ServiceImplName);
+	} %>
+
+<%	foreach (String s in batisMapFileNames) {	%>
+<sqlMap resource="sqlmap/<% =s %>" />
+<%	}	%>
+
+<%	foreach (String s in beanNames) {	%>
+<import resource="bean/<% =s %>" />
+<%	}	%>
+
+<%	for (int i = 0;i < sintfNames.Count; i++) {	%>
+<dubbo:service interface="<% =serviceImpl.Builder.ServiceIntfNamespace %>.<%=sintfNames[i]%>" ref="<%=simplNames[i]%>" />
+<%	}	%>
+
+<% %>
+<%	for (int i = 0;i < sintfNames.Count; i++) {	%>
+<dubbo:reference id="<%=sintfNames[i]%>" interface="<% =serviceImpl.Builder.ServiceIntfNamespace %>.<%=sintfNames[i]%>" />
+<%	}	%>

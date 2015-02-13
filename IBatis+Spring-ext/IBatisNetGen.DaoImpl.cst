@@ -1,0 +1,217 @@
+﻿<%-- 
+Name:	IBatis.DaoImpl.cst
+Version: 2007.02.08
+Author: Jinwl  ( jinweile@163.com )
+Description: Generates the data access interface for IBatis (see ibatis.apache.org)
+--%>
+<%@ CodeTemplate Language="C#" TargetLanguage="C#" Src="CSBatisBuilder.cs" Inherits="TableTemplate" Debug="true"  Description="Generates IBatis map and data class from a database table." %>
+
+<%@ Assembly Name="System" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Assembly Name="CodeSmith.BaseTemplates" %>
+<%@ Assembly Name="CodeSmith.CustomProperties" %>
+<%@ Assembly Name="SchemaExplorer" %>
+<%--<%@ Assembly Src="CSBatisBuilder.cs" %>--%>
+
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.ComponentModel" %>
+<%@ Import Namespace="System.Collections.Specialized" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Import Namespace="System.Text" %>
+<%@ Import Namespace="CSBatisBuilder" %>
+<script runat="template">
+	protected override FileOption GetDefaultFileOption() {
+		return FileSetOption.CreateDefaultDaoImplOption();
+	}
+</script>
+package <% =Builder.DaoImplNamespace %>;
+
+import java.sql.SQLException;
+import java.util.Map;
+import java.util.List;
+import java.util.Date;
+import java.math.BigDecimal;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
+
+<%	if (Builder.EntityNamespace != Builder.DaoImplNamespace) { %>
+import <% =Builder.EntityNamespace %>.<% =Builder.EntityName %>;
+<%	} %>
+<%	if (Builder.DaoIntfNamespace != Builder.DaoImplNamespace) { %>
+import <% =Builder.DaoIntfNamespace %>.<% =Builder.DaoIntfName %>;
+<%	} %>
+<%	if (Builder.DaoImplOption.Usings != null) {
+		foreach (String s in Builder.DaoImplOption.Usings) { %>
+import <% =s %>.*;
+<%		} %>
+<%	} %>
+	
+/**
+ *<% =Builder.DaoImplName %> is the implementation of <% =Builder.DaoIntfName %>
+ */
+public <% =Builder.DaoImplPartialDecl %>class <% =Builder.DaoImplName %><% =Builder.DaoImplBaseDecl %> {
+	
+	private SqlMapClient <% =Builder.SqlMapper %> = null;
+	
+	/**
+	 * data map
+	 * @param mapper
+	 */
+	public void setMapper(SqlMapClient <% =Builder.SqlMapper %>){
+		this.<% =Builder.SqlMapper %> = <% =Builder.SqlMapper %>;
+	}
+
+<%	//GetCount
+if (Builder.DaoMethodSetOption.GetCountOption.GenerateImpl) { %>
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.GetCountMethod %>
+	 */
+	public int <% =Builder.GetCountMethod %>() throws SQLException {
+		String stmtId = "<% =Builder.GetCountStmtId %>";
+		int result = (Integer)<% =Builder.SqlMapper %>.queryForObject(stmtId);
+		return result;
+	}
+
+<%	} %>
+<%	//Find
+if (Builder.DaoMethodSetOption.FindOption.GenerateImpl) { %>
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.FindMethod %>
+	 */
+	public <% =Builder.EntityName %> <% =Builder.FindMethod %>(<% =Builder.GetClrParamsDecl(Builder.PkColumns) %>) throws SQLException {
+		String stmtId = "<% =Builder.FindStmtId %>";
+		<% =Builder.EntityName %> result = (<% =Builder.EntityName %>) <% =Builder.SqlMapper %>.queryForObject(stmtId, <% =Builder.GetClrParamNames(Builder.PkColumns) %>);
+		return result;
+	}
+
+<%	} //if %>
+<%	//QuickFind
+if (Builder.HasLob && Builder.DaoMethodSetOption.FindNonLobOption.GenerateImpl) { %>
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.FindNonLobMethod %>
+	 */
+	public <% =Builder.EntityName %> <% =Builder.FindNonLobMethod %>(<% =Builder.GetClrParamsDecl(Builder.PkColumns) %>) throws SQLException {
+		String stmtId = "<% =Builder.FindNonLobStmtId %>";
+		<% =Builder.EntityName %> result = (<% =Builder.EntityName %>) <% =Builder.SqlMapper %>.queryForObject(stmtId, <% =Builder.GetClrParamNames(Builder.PkColumns) %>);
+		return result;
+	}
+	
+<%	} //if %>
+<%	//FindAll
+if (Builder.DaoMethodSetOption.FindAllOption.GenerateIntf) { %>
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.FindAllMethod %>
+	 */
+	@SuppressWarnings("unchecked")
+	public List<<% =Builder.EntityName %>> <% =Builder.FindAllMethod %>() throws SQLException {
+		String stmtId = "<% =Builder.FindAllStmtId %>";
+		List<<% =Builder.EntityName %>> result = <% =Builder.SqlMapper %>.queryForList(stmtId, null);
+		return result;
+	}
+	
+<%	} //if %>
+<%	//QuickFindAll
+if (Builder.DaoMethodSetOption.FindNonLobAllOption.GenerateIntf) { %>
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.FindNonLobAllMethod %>
+	 */
+	@SuppressWarnings("unchecked")
+	public List<<% =Builder.EntityName %>> <% =Builder.FindNonLobAllMethod %>() throws SQLException {
+		String stmtId = "<% =Builder.FindNonLobAllStmtId %>";
+		List<<% =Builder.EntityName %>> result = <% =Builder.SqlMapper %>.queryForList(stmtId, null);
+		return result;
+	}
+	
+<%	} //if %>
+<%	//FindBy, QuickFindBy
+foreach (ColumnInfo c in Builder.FinderColumns) { 
+	//FindBy
+	if (Builder.DaoMethodSetOption.FindByOption.GenerateImpl) { %>
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.FindByMethod(c) %>
+	 */
+	@SuppressWarnings("unchecked")
+	public List<<% =Builder.EntityName %>> <% =Builder.FindByMethod(c) %>(<% =c.ClrParamDecl %>) throws SQLException {
+		String stmtId = "<% =Builder.FindByStmtId(c) %>";
+		List<<% =Builder.EntityName %>> result = <% =Builder.SqlMapper %>.queryForList(stmtId, <% =c.ClrParamName %>);
+		return result;
+	}
+	
+<%		} //if	%>
+<%	//QuickFindBy
+	if (Builder.HasLob && Builder.DaoMethodSetOption.FindNonLobByOption.GenerateImpl) { %>
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.FindNonLobByMethod(c) %>
+	 */
+	@SuppressWarnings("unchecked")
+	public List<<% =Builder.EntityName %>> <% =Builder.FindNonLobByMethod(c) %>(<% =c.ClrParamDecl %>) throws SQLException {
+		String stmtId = "<% =Builder.FindNonLobByStmtId(c) %>";
+		List<<% =Builder.EntityName %>> result = <% =Builder.SqlMapper %>.queryForList(stmtId, <% =c.ClrParamName %>);
+		return result;
+	}
+	
+<%		} //if	
+} //foreach %>
+<%	//Insert
+if (Builder.DaoMethodSetOption.InsertOption.GenerateImpl) { %>
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.InsertMethod %>
+	 */
+	public <% =Builder.PkColumns[0].ClrTypeDecl%> <% =Builder.InsertMethod %>(<% =Builder.EntityName %> obj) throws SQLException {
+		if (obj == null) throw new NullPointerException("obj");
+		String stmtId = "<% =Builder.InsertStmtId %>";
+		return (<% =Builder.PkColumns[0].ClrTypeDecl%>) <% =Builder.SqlMapper %>.insert(stmtId, obj);
+	}
+	
+<%	} //if %>
+<%	//Update
+if (Builder.DaoMethodSetOption.UpdateOption.GenerateImpl) { %>
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.UpdateMethod %>
+	 */
+	public int <% =Builder.UpdateMethod %>(<% =Builder.EntityName %> obj) throws SQLException {
+		if (obj == null) throw new NullPointerException("obj");
+		String stmtId = "<% =Builder.UpdateStmtId %>";
+		return <% =Builder.SqlMapper %>.update(stmtId, obj);
+	}
+	
+<%	} //if %>
+<%	//Delete
+if (Builder.DaoMethodSetOption.DeleteOption.GenerateImpl) { %>
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.DeleteMethod %>
+	 */
+	public int <% =Builder.DeleteMethod %>(<% =Builder.EntityName %> obj) throws SQLException {
+		if (obj == null) throw new NullPointerException("obj");
+		String stmtId = "<% =Builder.DeleteStmtId %>";
+		return <% =Builder.SqlMapper %>.delete(stmtId, obj);
+	}
+	
+<%	} //if %>
+<%  //DeleteBy
+if (Builder.DaoMethodSetOption.DeleteByOption.GenerateImpl) { %>
+<%		foreach (ColumnInfo c in Builder.FinderColumns) { %>
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.DeleteByMethod(c) %>
+	 */
+	public int <% =Builder.DeleteByMethod(c) %>(<% =c.ClrParamDecl %>) throws SQLException {
+		String stmtId = "<% =Builder.DeleteByStmtId(c) %>";
+		int result = <% =Builder.SqlMapper %>.delete(stmtId, <% =c.ClrParamName %>);
+		return result;
+	}
+	
+<%		} //foreach %>
+<%	} //if %>
+<%	//Reload
+if (Builder.DaoMethodSetOption.ReloadOption.GenerateImpl) { %>
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.ReloadMethod %>
+	 */
+	public void <% =Builder.ReloadMethod %>(<% =Builder.EntityName %> obj) throws SQLException {
+		if (obj == null) throw new NullPointerException("obj");
+		String stmtId = "<% =Builder.FindStmtId %>";
+		<% =Builder.SqlMapper %>.queryForObject(stmtId, obj, obj);
+	}
+	
+<%	} //if %>
+}
