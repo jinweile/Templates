@@ -123,3 +123,18 @@ Description: Generates SQLMapping/DataClass/DaoIntf/DaoImpl files for IBatis.Net
 <%	for (int i = 0;i < sintfNames.Count; i++) {	%>
 <dubbo:reference id="<%=sintfNames[i]%>" interface="<% =serviceImpl.Builder.ServiceIntfNamespace %>.<%=sintfNames[i]%>" />
 <%	}	%>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<!-- daobean Start -->
+    <%	for (int i = 0;i < implNames.Count; i++) {	%>
+	<bean id="<% =implNames[i] %>" class="<% =daoImpl.Builder.DaoImplNamespace %>.<% =implNames[i] %>">
+		<property name="<% =daoImpl.Builder.SqlMapper %>">
+			<ref bean="sqlMapClient" />
+		</property>
+	</bean>
+    <%	}	%>
+	<!-- daobean End -->
+</beans>

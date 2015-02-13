@@ -84,6 +84,31 @@ if (Builder.DaoMethodSetOption.FindOption.GenerateImpl) { %>
 		return result;
 	}
 
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.Select
+	 */
+    public static List<<% =Builder.EntityName %>> Select(Map param) throws SQLException {
+        String stmtId = "<% =Builder.SelectStmtId %>";
+        return <% =Builder.SqlMapper %>.QueryForList<<% =Builder.EntityName %>>(stmtId, param);
+    }
+
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.SelectPager
+	 */           
+    public static List<<% =Builder.EntityName %>> SelectPager(Map param,  int start, int end) throws SQLException {
+        String stmtId = "<% =Builder.SelectPagerStmtId %>";
+        if (param == null) {
+            param = new HashMap();
+        }
+        if (start > 0) {
+            param.Add("Start", start);
+        }
+        if (end > 0) {
+            param.Add("End", end);
+        }
+        return <% =Builder.SqlMapper %>.QueryForList<<% =Builder.EntityName %>>(stmtId, param);
+    }
+
 <%	} %>
 <%	//FindAll
 if (Builder.DaoMethodSetOption.FindAllOption.GenerateIntf) { %>
@@ -108,6 +133,15 @@ if (Builder.DaoMethodSetOption.InsertOption.GenerateImpl) { %>
 		String stmtId = "<% =Builder.InsertStmtId %>";
 		return (<% =Builder.PkColumns[0].ClrTypeDecl%>) <% =Builder.SqlMapper %>.insert(stmtId, obj);
 	}
+    
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.BatchInsert
+	 */
+    public static void BatchInsert(List<<% =Builder.EntityName %>> list) throws SQLException {
+        if (list == null || list.size() == 0) throw new NullPointerException("list");
+        String stmtId = "<% =Builder.InsertStmtId %>Batch";
+	    <% =Builder.SqlMapper %>.Insert(stmtId, list);
+    }
 	
 <%	} //if %>
 <%	//Update
@@ -119,6 +153,23 @@ if (Builder.DaoMethodSetOption.UpdateOption.GenerateImpl) { %>
 		if (obj == null) throw new NullPointerException("obj");
 		String stmtId = "<% =Builder.UpdateStmtId %>";
 		return <% =Builder.SqlMapper %>.update(stmtId, obj);
+	}
+    
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.UpdateMethod %>ByMap
+	 */
+    public static  int <% =Builder.UpdateMethod %>ByMap(Map param) {
+		String stmtId = "<% =Builder.UpdateStmtId %>ByMap";
+		return <% =Builder.SqlMapper %>.Update(stmtId, param);
+	}
+    
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.UpdateMethod %>Dynamic
+	 */
+    public static int <% =Builder.UpdateMethod %>Dynamic(<% =Builder.EntityName %> model) {
+		if (model == null) throw new NullPointerException("model");
+		String stmtId = "<% =Builder.UpdateStmtId %>Dynamic";
+		return <% =Builder.SqlMapper %>.Update(stmtId, model);
 	}
 	
 <%	} //if %>

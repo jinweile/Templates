@@ -233,7 +233,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
             ORDER BY $OrderBy$
         </isPropertyAvailable>
         <dynamic prepend="LIMIT">
-            <isPropertyAvailable property="Start">
+            <isPropertyAvailable prepend="," property="Start">
                 #Start#
             </isPropertyAvailable>
             <isPropertyAvailable prepend="," property="End">
@@ -286,7 +286,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
             ORDER BY $OrderBy$
         </isPropertyAvailable>
         <dynamic prepend="LIMIT">
-            <isPropertyAvailable property="Start">
+            <isPropertyAvailable prepend="," property="Start">
                 #Start#
             </isPropertyAvailable>
             <isPropertyAvailable prepend="," property="End">
