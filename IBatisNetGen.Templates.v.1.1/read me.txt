@@ -1,0 +1,35 @@
+﻿Options
+        DaoImplOption
+        下面的 Namespace 和   SqlMapperFmt
+
+        DaoIntfOption 
+        下面的 Namespace
+
+        DaoMethodSetOption
+        只勾选
+        DeleteOption  的GenerateImpl
+        FindOption  的GenerateImpl
+        GetCountOption  的GenerateImpl
+        InsertOption  的GenerateImpl
+        UpdateOption   的GenerateImpl
+        其他的都不要勾选
+
+        EntityOption
+        下面的 Namespace
+
+        SqlOption
+        下面IdPattern 选择Classfied 
+
+
+Output
+        FileSetOption
+        下面的
+        Dir是输出目录
+        FileNameFmt 自己定义输出文件的格式
+        Save打钩
+
+数据
+        Name:XX
+        Provider Type :  SqlSchemaProvider
+        Connection String:
+        Data Source=192.168.0.53;Initial Catalog=XX;Persist Security Info=True;User ID=sa;Password=do4best!!

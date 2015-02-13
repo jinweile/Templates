@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -1769,6 +1769,8 @@ namespace CSBatisBuilder {
                 columns.Add(cb);
 
                 if (c.IsPrimaryKeyMember) {
+                    //somnus 
+                    m_PkColumnInfo = cb;
                     pkColumns.Add(cb);
                 } else {
                     nonPkColumns.Add(cb);
@@ -1793,6 +1795,16 @@ namespace CSBatisBuilder {
 
             m_HasLob = lobColumns.Count > 0;
             m_IdBase = GetIdBase(m_EntityName, m_EntityNamespace, SqlOption);
+        }
+        
+        // somnus
+        private readonly ColumnInfo m_PkColumnInfo;
+        public ColumnInfo PkColumnInfo
+        {
+            get
+            {
+                return m_PkColumnInfo;
+            }
         }
 
         #region ITableBuilderOption members
@@ -2364,6 +2376,14 @@ namespace CSBatisBuilder {
         [Category(Categories.DebugInfo)]
         public string FindStmtId {
             get { return String.Format(DaoMethodSetOption.FindOption.IdFmt, IdBase); }
+        }
+        
+        public string SelectStmtId {
+            get{ return String.Format("{0}Select", IdBase); }
+        }
+        
+        public string SelectPagerStmtId {
+            get{ return String.Format("{0}SelectPager", IdBase); }
         }
 
         [Category(Categories.DebugInfo)]

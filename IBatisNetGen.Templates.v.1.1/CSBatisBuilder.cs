@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -98,7 +98,7 @@ namespace CSBatisBuilder {
 
         #region IsPartial
 
-        private const bool m_DefaultIsPartial = false;
+        private const bool m_DefaultIsPartial = true;
 
         private bool m_IsPartial = m_DefaultIsPartial;
 
@@ -341,10 +341,10 @@ namespace CSBatisBuilder {
 
         #region VarPrefix
 
-        private String m_VarPrefix = "";
+        private String m_VarPrefix = "m_";
 
         [Optional]
-        [DefaultValue("")]
+        [DefaultValue("m_")]
         [Description("(Optional) The prefix of the member variable name.")]
         public String VarPrefix {
             get { return m_VarPrefix; }
@@ -425,7 +425,7 @@ namespace CSBatisBuilder {
             set { m_NameFmt = CSHelper.Trim(value, true); }
         }
 
-        private const String m_DefaultSqlMapperFmt = "mapper";
+        private const String m_DefaultSqlMapperFmt = "SqlMapper.Instance()";
 
         private String m_SqlMapperFmt = m_DefaultSqlMapperFmt;
 
@@ -690,7 +690,7 @@ namespace CSBatisBuilder {
 
         #region IdPattern
 
-        private const StmtIdPattern m_DefaultIdPattern = StmtIdPattern.Classified;
+        private const StmtIdPattern m_DefaultIdPattern = StmtIdPattern.Local;
 
         private StmtIdPattern m_IdPattern = m_DefaultIdPattern;
 
@@ -931,7 +931,7 @@ namespace CSBatisBuilder {
         #region EntityOption
 
         public static FileOption CreateDefaultEntityOption() {
-            return new FileOption(false, @"Output\Entity", "{0}.java");
+            return new FileOption(false, @"Output\Entity", "{0}.cs");
         }
 
         private FileOption m_EntityOption = CreateDefaultEntityOption();
@@ -947,7 +947,7 @@ namespace CSBatisBuilder {
         #region DaoIntfOption
 
         public static FileOption CreateDefaultDaoIntfOption() {
-            return new FileOption(false, @"Output\DaoIntf", "I{0}Dao.java");
+            return new FileOption(false, @"Output\DaoIntf", "I{0}Dao.cs");
         }
 
         private FileOption m_DaoIntfOption = CreateDefaultDaoIntfOption();
@@ -963,7 +963,7 @@ namespace CSBatisBuilder {
         #region DaoImplOption
 
         public static FileOption CreateDefaultDaoImplOption() {
-            return new FileOption(false, @"Output\DaoImpl", "{0}Dao.java");
+            return new FileOption(false, @"Output\DaoImpl", "{0}Dao.cs");
         }
 
         private FileOption m_DaoImplOption = CreateDefaultDaoImplOption();
@@ -972,54 +972,6 @@ namespace CSBatisBuilder {
         public FileOption DaoImplOption {
             get { return m_DaoImplOption; }
             set { m_DaoImplOption = value; }
-        }
-
-        #endregion
-		
-        #region BeanOption
-
-        public static FileOption CreateDefaultBeanOption() {
-            return new FileOption(false, @"Output\Bean", "{0}Bean.xml");
-        }
-
-        private FileOption m_BeanOption = CreateDefaultBeanOption();
-
-        [Description("The file options for generated Spring Bean")]
-        public FileOption BeanOption {
-            get { return m_BeanOption; }
-            set { m_BeanOption = value; }
-        }
-
-        #endregion
-		
-        #region ServiceIntfOption
-
-        public static FileOption CreateDefaultServiceIntfOption() {
-            return new FileOption(false, @"Output\ServiceIntf", "I{0}Service.java");
-        }
-
-        private FileOption m_ServiceIntfOption = CreateDefaultServiceIntfOption();
-
-        [Description("The file options for generated service interfaces")]
-        public FileOption ServiceIntfOption {
-            get { return m_ServiceIntfOption; }
-            set { m_ServiceIntfOption = value; }
-        }
-
-        #endregion
-
-        #region ServiceImplOption
-
-        public static FileOption CreateDefaultServiceImplOption() {
-            return new FileOption(false, @"Output\ServiceImpl", "{0}Service.java");
-        }
-
-        private FileOption m_ServiceImplOption = CreateDefaultServiceImplOption();
-
-        [Description("The file options for generated service implementations")]
-        public FileOption ServiceImplOption {
-            get { return m_ServiceImplOption; }
-            set { m_ServiceImplOption = value; }
         }
 
         #endregion
@@ -1141,7 +1093,7 @@ namespace CSBatisBuilder {
 
         #region QuotedStr
 
-        public String QuotedStr(String s) { return "" + s + ""; }
+        public String QuotedStr(String s) { return "[" + s + "]"; }
 
         #endregion
 
@@ -1201,37 +1153,36 @@ namespace CSBatisBuilder {
             if (m_NativeTypeMap.TryGetValue(column.NativeType, out sqlt))
                 return sqlt;
 
-            switch ((int)column.DataType) {
-                case (int)DbType.AnsiString: return SqlDbType.VarChar;
-                case (int)DbType.AnsiStringFixedLength: return SqlDbType.Char;
-                case (int)DbType.Binary: return SqlDbType.VarBinary;
-                case (int)DbType.Boolean: return SqlDbType.Bit;
-                case (int)DbType.Byte: return SqlDbType.TinyInt;
-                case (int)DbType.Currency: return SqlDbType.Money;
-                case (int)DbType.Date: return SqlDbType.DateTime;
-                case (int)DbType.DateTime: return SqlDbType.DateTime;
-                case (int)DbType.Decimal: return SqlDbType.Decimal;
-                case (int)DbType.Double: return SqlDbType.Float;
-                case (int)DbType.Guid: return SqlDbType.UniqueIdentifier;
-                case (int)DbType.Int16: return SqlDbType.SmallInt;
-                case (int)DbType.Int32: return SqlDbType.Int;
-                case (int)DbType.Int64: return SqlDbType.BigInt;
+            switch (column.DataType) {
+                case DbType.AnsiString: return SqlDbType.VarChar;
+                case DbType.AnsiStringFixedLength: return SqlDbType.Char;
+                case DbType.Binary: return SqlDbType.VarBinary;
+                case DbType.Boolean: return SqlDbType.Bit;
+                case DbType.Byte: return SqlDbType.TinyInt;
+                case DbType.Currency: return SqlDbType.Money;
+                case DbType.Date: return SqlDbType.DateTime;
+                case DbType.DateTime: return SqlDbType.DateTime;
+                case DbType.Decimal: return SqlDbType.Decimal;
+                case DbType.Double: return SqlDbType.Float;
+                case DbType.Guid: return SqlDbType.UniqueIdentifier;
+                case DbType.Int16: return SqlDbType.SmallInt;
+                case DbType.Int32: return SqlDbType.Int;
+                case DbType.Int64: return SqlDbType.BigInt;
                 //case DbType.Object: return SqlDbType;
                 //case DbType.SByte: return SqlDbType;
-                case (int)DbType.Single: return SqlDbType.Real;
-                case (int)DbType.String: return SqlDbType.NVarChar;
-                case (int)DbType.StringFixedLength: return SqlDbType.NChar;
-                case (int)DbType.Time: return SqlDbType.DateTime;
+                case DbType.Single: return SqlDbType.Real;
+                case DbType.String: return SqlDbType.NVarChar;
+                case DbType.StringFixedLength: return SqlDbType.NChar;
+                //case DbType.Time: return SqlDbType.DateTime;
                 //case DbType.UInt16: return SqlDbType;
                 //case DbType.UInt32: return SqlDbType;
                 //case DbType.UInt64: return SqlDbType;
                 //case DbType.VarNumeric: return SqlDbType.Decimal;
-                case (int)DbType.Xml: return SqlDbType.Xml;
-				case 13: return SqlDbType.Text;
+                case DbType.Xml: return SqlDbType.Xml;
                 default :
                     throw new NotImplementedException(String.Format(
                         "Cannot get the SqlDbType for Column of DataType {0}.",
-                        ((int)column.DataType).ToString()));
+                        column.DataType.ToString()));
             }
         }
 
@@ -1242,9 +1193,7 @@ namespace CSBatisBuilder {
                 case SqlDbType.Binary: return typeof(Byte[]);
                 case SqlDbType.Bit: return typeof(Boolean);
                 case SqlDbType.Char: return typeof(String);
-				case SqlDbType.Date: return typeof(DateTime);
                 case SqlDbType.DateTime: return typeof(DateTime);
-                case SqlDbType.Time: return typeof(DateTime);
                 case SqlDbType.Decimal: return typeof(Decimal);
                 case SqlDbType.Float: return typeof(Double);
                 case SqlDbType.Image: return typeof(Byte[]);
@@ -1341,18 +1290,7 @@ namespace CSBatisBuilder {
             m_SqlColumnName = DbVendor.QuotedStr(Column.Name);
             m_SqlQualifiedColumnName = DbVendor.QuotedStr(column.Table.Name) + "." + m_SqlColumnName;
             m_SqlInlineParameterMap = GetSqlInlineParameterMap(PropName, ClrTypeDecl, ProviderDbTypeName, IsExpilicit);
-            m_SqlParameterClass = "";//m_ClrPrimitiveType.Name;
-			switch(ClrTypeDecl){
-				case "Date":
-					m_SqlParameterClass = "java.util.Date";
-					break;
-				case "BigDecimal":
-					m_SqlParameterClass = "java.math.BigDecimal";
-					break;
-				default:
-					m_SqlParameterClass = ClrTypeDecl;
-					break;
-			}
+            m_SqlParameterClass = m_ClrPrimitiveType.Name;
         }
 
         #region MemberOption
@@ -1561,8 +1499,8 @@ namespace CSBatisBuilder {
         private static String GetSqlInlineParameterMap(String propName, String clrTypeDecl, String providerDbTypeName, bool isExplicit) {
             String s = propName;
             //s = s + ", type=" + clrTypeDecl;
-            if (isExplicit && (String.IsNullOrEmpty(providerDbTypeName) == false))
-                s = s + ",dbType=" + providerDbTypeName;
+            //if (isExplicit && (String.IsNullOrEmpty(providerDbTypeName) == false))
+            //    s = s + ",dbType=" + providerDbTypeName;
             return s;
         }
 
@@ -1582,28 +1520,9 @@ namespace CSBatisBuilder {
 
         private static String GetClrTypeDecl(Type clrType) {
             Type nt = Nullable.GetUnderlyingType(clrType);
-            string typename = "";
             if (nt == null)
-                typename = clrType.Name;
-            else
-                typename = nt.Name;
-			String result = "";
-            switch (typename) {
-                case "Int64" : result = "Long"; break;
-                case "Byte[]" : result = "Byte[]"; break;
-                case "Boolean" : result = "Boolean"; break;
-                case "String" : result = "String"; break;
-                case "DateTime" : result = "Date"; break;
-                case "Decimal" : result = "BigDecimal"; break;
-                case "Double" : result = "Double"; break;
-                case "Int32" : result = "Integer"; break;
-                case "Single" : result = "Float"; break;
-                case "Int16" : result = "Integer"; break;
-                case "Byte" : result = "Integer"; break;
-                case "Object" : result = "Object"; break;
-                case "Guid" : result = "String"; break;
-			}
-			return result;
+                return clrType.Name;
+            return nt.Name + "?";
         }
 
         private static String GetPropName(ColumnSchema column, MemberOption option) {
@@ -1635,10 +1554,6 @@ namespace CSBatisBuilder {
 
             if (option.PropInPascalCase) {
                 result = CSHelper.GetPascalCase(result);
-            }
-            
-            if(string.IsNullOrEmpty(result)){
-                throw new Exception("表名与列名不允许相同：" + column.Name);   
             }
 
             result = CSHelper.GetCSharpIdentifier(result);
@@ -1681,15 +1596,6 @@ namespace CSBatisBuilder {
 
         /// <summary>Gets the options for SQL generation.</summary>
         SqlOption SqlOption { get; }
-		
-        /// <summary>Gets the options for service interface generation.</summary>
-        ServiceIntfOption ServiceIntfOption { get; }
-
-        /// <summary>Gets the options for service class generation.</summary>
-        ServiceImplOption ServiceImplOption { get; }
-		
-        /// <summary>Gets the options for servoce methods.</summary>
-        //ServiceMethodSetOption ServiceMethodSetOption { get; }
 
     }
 
@@ -1717,41 +1623,24 @@ namespace CSBatisBuilder {
             m_EntityFullName = CSHelper.GetQualifiedName(EntityName, EntityNamespace);
             m_EntityQualifiedName = CSHelper.GetAssemblyQualifiedName(EntityFullName, EntityOption.Assembly);
             m_EntityPartialDecl = EntityOption.IsPartial ? "partial " : String.Empty;
-            m_EntityBaseDecl = String.IsNullOrEmpty(EntityOption.BaseType) ? String.Empty : " extends " + EntityOption.BaseType;
+            m_EntityBaseDecl = String.IsNullOrEmpty(EntityOption.BaseType) ? String.Empty : " : " + EntityOption.BaseType;
 
             m_DaoIntfNamespace = DaoIntfOption.Namespace;
             m_DaoIntfName = String.Format(DaoIntfOption.NameFmt, EntityName);
             m_DaoIntfFullName = CSHelper.GetQualifiedName(DaoIntfName, DaoIntfNamespace);
             m_DaoIntfQualifiedName = CSHelper.GetAssemblyQualifiedName(DaoIntfFullName, DaoIntfOption.Assembly);
             m_DaoIntfPartialDecl = DaoIntfOption.IsPartial ? "partial " : String.Empty;
-            m_DaoIntfBaseDecl = String.IsNullOrEmpty(DaoIntfOption.BaseType) ? String.Empty : " implements " + DaoIntfOption.BaseType;
+            m_DaoIntfBaseDecl = String.IsNullOrEmpty(DaoIntfOption.BaseType) ? String.Empty : " : " + DaoIntfOption.BaseType;
 
             m_DaoImplNamespace = DaoImplOption.Namespace;
             m_DaoImplName = String.Format(DaoImplOption.NameFmt, EntityName);
             m_DaoImplFullName = CSHelper.GetQualifiedName(DaoImplName, DaoImplNamespace);
             m_DaoImplQualifiedName = CSHelper.GetAssemblyQualifiedName(DaoImplQualifiedName, DaoImplOption.Assembly);
             m_DaoImplPartialDecl = DaoImplOption.IsPartial ? "partial " : String.Empty;
-            m_DaoImplBaseDecl = (String.IsNullOrEmpty(DaoImplOption.BaseType) ? String.Empty : " extends " + DaoImplOption.BaseType)
-                				+ " implements "
-                				+ m_DaoIntfName;
+            m_DaoImplBaseDecl = " : " + DaoImplOption.BaseType 
+                + (String.IsNullOrEmpty(DaoImplOption.BaseType) ? String.Empty : ", ") 
+                + m_DaoIntfName;
             m_SqlMapper = DaoImplOption.SqlMapperFmt;
-								
-            m_ServiceIntfNamespace = ServiceIntfOption.Namespace;
-            m_ServiceIntfName = String.Format(ServiceIntfOption.NameFmt, EntityName);
-            m_ServiceIntfFullName = CSHelper.GetQualifiedName(ServiceIntfName, ServiceIntfNamespace);
-            m_ServiceIntfQualifiedName = CSHelper.GetAssemblyQualifiedName(ServiceIntfFullName, ServiceIntfOption.Assembly);
-            m_ServiceIntfPartialDecl = ServiceIntfOption.IsPartial ? "partial " : String.Empty;
-            m_ServiceIntfBaseDecl = String.IsNullOrEmpty(ServiceIntfOption.BaseType) ? String.Empty : " implements " + ServiceIntfOption.BaseType;
-
-            m_ServiceImplNamespace = ServiceImplOption.Namespace;
-            m_ServiceImplName = String.Format(ServiceImplOption.NameFmt, EntityName);
-            m_ServiceImplFullName = CSHelper.GetQualifiedName(ServiceImplName, ServiceImplNamespace);
-            m_ServiceImplQualifiedName = CSHelper.GetAssemblyQualifiedName(ServiceImplQualifiedName, ServiceImplOption.Assembly);
-            m_ServiceImplPartialDecl = ServiceImplOption.IsPartial ? "partial " : String.Empty;
-            m_ServiceImplBaseDecl = (String.IsNullOrEmpty(ServiceImplOption.BaseType) ? String.Empty : " extends " + ServiceImplOption.BaseType)
-                				+ " implements "
-                				+ m_ServiceIntfName;
-			m_Dao = ServiceImplOption.SqlMapperFmt;
 
             int columnCount = SourceTable.Columns.Count;
             bool isSingleColumnPk = SourceTable.PrimaryKey.MemberColumns.Count == 1;    //If the table has a single-column primary key.
@@ -1768,7 +1657,8 @@ namespace CSBatisBuilder {
                 ColumnInfo cb = new ColumnInfo(c, MemberOption, DbVendor);
                 columns.Add(cb);
 
-                if (c.IsPrimaryKeyMember) {
+                if (c.IsPrimaryKeyMember)
+                {
                     //somnus 
                     m_PkColumnInfo = cb;
                     pkColumns.Add(cb);
@@ -1796,7 +1686,7 @@ namespace CSBatisBuilder {
             m_HasLob = lobColumns.Count > 0;
             m_IdBase = GetIdBase(m_EntityName, m_EntityNamespace, SqlOption);
         }
-        
+
         // somnus
         private readonly ColumnInfo m_PkColumnInfo;
         public ColumnInfo PkColumnInfo
@@ -1820,12 +1710,6 @@ namespace CSBatisBuilder {
         public DaoImplOption DaoImplOption { get { return m_BuilderOption.DaoImplOption; } }
 
         public DaoMethodSetOption DaoMethodSetOption { get { return m_BuilderOption.DaoMethodSetOption; } }
-				
-        public ServiceIntfOption ServiceIntfOption { get { return m_BuilderOption.ServiceIntfOption; } }
-
-        public ServiceImplOption ServiceImplOption { get { return m_BuilderOption.ServiceImplOption; } }
-		
-		//public ServiceMethodSetOption ServiceMethodSetOption { get { return m_BuilderOption.ServiceMethodSetOption; } }
 
         public SqlOption SqlOption { get { return m_BuilderOption.SqlOption; } }
 
@@ -2062,139 +1946,6 @@ namespace CSBatisBuilder {
         }
 
         #endregion
-		
-        #region Dao
-
-        private readonly String m_Dao;
-
-        /// <summary>Gets the expression of SqlMapper.</summary>
-        public String Dao {
-            get { return m_Dao; }
-        }
-
-        #endregion
-
-        #endregion
-
-        #region ServiceIntf
-
-        #region ServiceIntfNamespace
-
-        private readonly String m_ServiceIntfNamespace;
-
-        /// <summary>Gets the namespace of the Service interface.</summary>
-        public String ServiceIntfNamespace { get { return m_ServiceIntfNamespace; } }
-
-        #endregion
-
-        #region ServiceIntfName
-
-        private readonly String m_ServiceIntfName;
-
-        /// <summary>Gets the name of the DAO interface.</summary>
-        public String ServiceIntfName { get { return m_ServiceIntfName; } }
-
-        #endregion
-
-        #region ServiceIntfFullName
-
-        private readonly String m_ServiceIntfFullName;
-
-        /// <summary>Gets the <see cref="Type.FullName"/> of the Service interface.</summary>
-        public String ServiceIntfFullName { get { return m_ServiceIntfFullName; } }
-
-        #endregion
-
-        #region ServiceIntfQualifiedName
-
-        private readonly String m_ServiceIntfQualifiedName;
-
-        /// <summary>Gets the <see cref="Type.AssemblyQualifiedName"/> of the Service interface.</summary>
-        public String ServiceIntfQualifiedName { get { return m_ServiceIntfQualifiedName; } }
-
-        #endregion
-
-        #region ServiceIntfPartialDecl
-
-        private readonly String m_ServiceIntfPartialDecl;
-
-        public String ServiceIntfPartialDecl {
-            get { return m_ServiceIntfPartialDecl; }
-        }
-
-        #endregion
-
-        #region ServiceIntfBaseDecl
-
-        private readonly String m_ServiceIntfBaseDecl;
-
-        /// <summary>Gets the base types declaraction.</summary>
-        public String ServiceIntfBaseDecl {
-            get { return m_ServiceIntfBaseDecl; }
-        } 
-
-        #endregion
-
-        #endregion
-
-        #region ServiceImpl
-
-        #region ServiceImplNamespace
-
-        private readonly String m_ServiceImplNamespace;
-
-        /// <summary>Gets the namespace of the Service class.</summary>
-        public String ServiceImplNamespace { get { return m_ServiceImplNamespace; } }
-
-        #endregion
-
-        #region ServiceImplName
-
-        private readonly String m_ServiceImplName;
-
-        /// <summary>Gets the name of the Service class.</summary>
-        public String ServiceImplName { get { return m_ServiceImplName; } }
-
-        #endregion
-
-        #region ServiceImplFullName
-
-        private readonly String m_ServiceImplFullName;
-
-        /// <summary>Gets the <see cref="Type.FullName"/> of the Service class.</summary>
-        public String ServiceImplFullName { get { return m_ServiceImplFullName; } }
-
-        #endregion
-
-        #region ServiceImplQualifiedName
-
-        private readonly String m_ServiceImplQualifiedName;
-
-        /// <summary>Gets the <see cref="Type.AssemblyQualifiedName"/> of the Service class.</summary>
-        public String ServiceImplQualifiedName { get { return m_ServiceImplQualifiedName; } }
-
-        #endregion
-
-        #region ServiceImplPartialDecl
-
-        private readonly String m_ServiceImplPartialDecl;
-
-        public String ServiceImplPartialDecl {
-            get { return m_ServiceImplPartialDecl; }
-        }
-
-        #endregion
-
-        #region ServiceImplBaseDecl
-
-        private readonly String m_ServiceImplBaseDecl;
-
-        /// <summary>Gets the base types declaraction.</summary>
-        public String ServiceImplBaseDecl {
-            get { return m_ServiceImplBaseDecl; }
-        }
-
-        #endregion
 
         #endregion
 
@@ -2377,15 +2128,17 @@ namespace CSBatisBuilder {
         public string FindStmtId {
             get { return String.Format(DaoMethodSetOption.FindOption.IdFmt, IdBase); }
         }
-        
-        public string SelectStmtId {
+
+        public string SelectStmtId
+        {
             get{ return String.Format("{0}Select", IdBase); }
         }
         
-        public string SelectPagerStmtId {
+             public string SelectPagerStmtId
+        {
             get{ return String.Format("{0}SelectPager", IdBase); }
         }
-
+        
         [Category(Categories.DebugInfo)]
         public string FindNonLobStmtId {
             get { return String.Format(DaoMethodSetOption.FindNonLobOption.IdFmt, IdBase); }
@@ -2487,9 +2240,9 @@ namespace CSBatisBuilder {
 
         private static String GetEntityDecl(String entityName, EntityOption option) {
             String s = String.Format("{0}class {1}",
-                option.IsPartial ? " " : " ", entityName);
+                option.IsPartial ? "partial " : "", entityName);
             if (CSHelper.IsNotBlank(option.BaseType))
-                s = s + " extends " + option.BaseType;
+                s = s + " : " + option.BaseType;
             return s;
         }
 
@@ -2599,45 +2352,6 @@ namespace CSBatisBuilder {
             set { m_DaoMethodSetOption = value; }
         }
 
-        #endregion
-		
-		#region ServiceIntfOption
-
-        private ServiceIntfOption m_ServiceIntfOption = new ServiceIntfOption();
-
-        [Category(Categories.Options)]
-        [Description("Service interface generation options")]
-        public ServiceIntfOption ServiceIntfOption {
-            get { return m_ServiceIntfOption; }
-            set { m_ServiceIntfOption = value; }
-        }
-
-        #endregion
-
-        #region ServiceImplOption
-
-        private ServiceImplOption m_ServiceImplOption = new ServiceImplOption();
-
-        [Category(Categories.Options)]
-        [Description("Service implementation generation options")]
-        public ServiceImplOption ServiceImplOption {
-            get { return m_ServiceImplOption; }
-            set { m_ServiceImplOption = value; }
-        }
-
-        #endregion
-
-        #region ServiceMethodSetOption
-		/*
-        private ServiceMethodSetOption m_ServiceMethodSetOption = new ServiceMethodSetOption();
-
-        [Category(Categories.Options)]
-        [Description("Service methods generation options")]
-        public ServiceMethodSetOption ServiceMethodSetOption {
-            get { return m_ServiceMethodSetOption; }
-            set { m_ServiceMethodSetOption = value; }
-        }
-		*/
         #endregion
 
         #endregion
@@ -2977,293 +2691,4 @@ namespace CSBatisBuilder {
 
     #endregion
 
-	#region NewAddService
-	
-	
-	
-	
-	
-    #region ServiceIntfOption
-
-    [TypeConverter(typeof(ExpandableObjectConverter))]
-    [PropertySerializer(typeof(XmlPropertySerializer))]
-    public class ServiceIntfOption : ClassOption {
-
-        private const String m_DefaultNameFmt = "I{0}Service";
-
-        private String m_NameFmt = m_DefaultNameFmt;
-
-        [DefaultValue(m_DefaultNameFmt)]
-        [Description("The Service interface name. The first format arg is the Entity class name")]
-        public String NameFmt {
-            get { return m_NameFmt; }
-            set { m_NameFmt = CSHelper.Trim(value, true); }
-        }
-
-    }
-
-    #endregion
-
-    #region ServiceImplOption
-
-    [TypeConverter(typeof(ExpandableObjectConverter))]
-    [PropertySerializer(typeof(XmlPropertySerializer))]
-    public class ServiceImplOption : ClassOption {
-
-        private const String m_DefaultNameFmt = "{0}Service";
-
-        private String m_NameFmt = m_DefaultNameFmt;
-
-        [DefaultValue(m_DefaultNameFmt)]
-        [Description("The Service implementation class name. The first format arg is the Entity class name")]
-        public String NameFmt {
-            get { return m_NameFmt; }
-            set { m_NameFmt = CSHelper.Trim(value, true); }
-        }
-
-        private const String m_DefaultSqlMapperFmt = "dao";
-
-        private String m_SqlMapperFmt = m_DefaultSqlMapperFmt;
-
-        [DefaultValue(m_DefaultSqlMapperFmt)]
-        [Description("Customize the way to get the ISqlMapper instance.")]
-        public String SqlMapperFmt {
-            get { return m_SqlMapperFmt; }
-            set { m_SqlMapperFmt = value; }
-        }
-    }
-
-    #endregion
-
-    #region ServiceMethodOption
-	/*
-    [TypeConverter(typeof(ExpandableObjectConverter))]
-    [PropertySerializer(typeof(XmlPropertySerializer))]
-    public class ServiceMethodOption {
-
-        /// <summary>This constructor used in XML serialization only. 
-        /// It's marked as <see cref="ObsoleteAttribute"/> for preventing unexpected calls.</summary>
-        [Obsolete]
-        public ServiceMethodOption() { }
-
-        public ServiceMethodOption(String stmtIdFmt) {
-            if (String.IsNullOrEmpty(stmtIdFmt)) throw new ArgumentNullException("stmtIdFmt");
-            m_IdFmt = stmtIdFmt;
-            m_DefaultStmtIdFmt = stmtIdFmt;
-        }
-
-        #region GenerateIntf
-
-        private const bool m_DefaultGenerateIntf = true;
-
-        private bool m_GenerateIntf = m_DefaultGenerateIntf;
-
-        [DefaultValue(m_DefaultGenerateIntf)]
-        [Description("Indicates if to generate the method in DAO interface.")]
-        public bool GenerateIntf {
-            get { return m_GenerateIntf; }
-            set { m_GenerateIntf = value; }
-        }
-
-        #endregion
-
-        #region GenerateImpl
-
-        private const bool m_DefaultGenerateImpl = true;
-
-        private bool m_GenerateImpl = m_DefaultGenerateImpl;
-
-        [DefaultValue(m_DefaultGenerateImpl)]
-        [Description("Indicates if to generate the method in Service implementation class.")]
-        public bool GenerateImpl {
-            get { return m_GenerateImpl; }
-            set { m_GenerateImpl = value; }
-        }
-
-        #endregion
-
-        #region IdFmt
-
-        private String m_IdFmt;
-
-        [Description("The format string of SQL statement ID. {0} is IdBase, {1} is PropName.")]
-        public String IdFmt {
-            get { return m_IdFmt; }
-            set {
-                if (String.IsNullOrEmpty(value) || String.IsNullOrEmpty(value.Trim())) throw new ArgumentNullException("value");
-                m_IdFmt = value.Trim();
-            }
-        }
-
-        private String m_DefaultStmtIdFmt;
-
-        private bool ShouldSerializeStmtIdFmt() {
-            return IdFmt != m_DefaultStmtIdFmt;
-        }
-
-        #endregion
-
-    }
-	*/
-    #endregion
-
-    #region ServiceMethodSetOption
-	/*
-    [TypeConverter(typeof(ExpandableObjectConverter))]
-    [PropertySerializer(typeof(XmlPropertySerializer))]
-    public class ServiceMethodSetOption {
-
-        #region GetCountOption
-
-        private ServiceMethodOption m_GetCountOption = new ServiceMethodOption("{0}GetCount");
-
-        [Description("Gets or sets the options for GetCount method.")]
-        public ServiceMethodOption GetCountOption {
-            get { return m_GetCountOption; }
-            set { m_GetCountOption = value; }
-        }
-
-        #endregion
-
-        #region FindOption
-
-        private ServiceMethodOption m_FindOption = new ServiceMethodOption("{0}Find");
-
-        [Description("Gets or sets the options for Find by primary key method.")]
-        public ServiceMethodOption FindOption {
-            get { return m_FindOption; }
-            set { m_FindOption = value; }
-        }
-
-        #endregion
-
-        #region FindNonLobOption
-
-        private ServiceMethodOption m_FindNonLobOption = new ServiceMethodOption("{0}QuickFind");
-
-        [Description("Gets or sets the options for FindNonLob method.")]
-        public ServiceMethodOption FindNonLobOption {
-            get { return m_FindNonLobOption; }
-            set { m_FindNonLobOption = value; }
-        }
-
-        #endregion
-
-        #region FindAllOption
-
-        private ServiceMethodOption m_FindAllOption = new ServiceMethodOption("{0}FindAll");
-
-        [Description("Gets or sets the options for FindAll method.")]
-        public ServiceMethodOption FindAllOption {
-            get { return m_FindAllOption; }
-            set { m_FindAllOption = value; }
-        }
-
-        #endregion
-
-        #region FindNonLobAllOption
-
-        private ServiceMethodOption m_FindNonLobAllOption = new ServiceMethodOption("{0}QuickFindAll");
-
-        [Description("Gets or sets the options for FindNonLobAll method.")]
-        public ServiceMethodOption FindNonLobAllOption {
-            get { return m_FindNonLobAllOption; }
-            set { m_FindNonLobAllOption = value; }
-        }
-
-        #endregion
-
-        #region FindByOption
-
-        private ServiceMethodOption m_FindByOption = new ServiceMethodOption("{0}FindBy{1}");
-
-        [Description("Gets or sets the options for FindBy method.")]
-        public ServiceMethodOption FindByOption {
-            get { return m_FindByOption; }
-            set { m_FindByOption = value; }
-        }
-
-        #endregion
-
-        #region FindNonLobByOption
-
-        private ServiceMethodOption m_FindNonLobByOption = new ServiceMethodOption("{0}QuickFindBy{1}");
-
-        [Description("Gets or sets the options for FindNonLobBy method.")]
-        public ServiceMethodOption FindNonLobByOption {
-            get { return m_FindNonLobByOption; }
-            set { m_FindNonLobByOption = value; }
-        }
-
-        #endregion
-
-        #region InsertOption
-
-        private ServiceMethodOption m_InsertOption = new ServiceMethodOption("{0}Insert");
-
-        [Description("Gets or sets the options for Insert method.")]
-        public ServiceMethodOption InsertOption {
-            get { return m_InsertOption; }
-            set { m_InsertOption = value; }
-        }
-
-        #endregion
-
-        #region UpdateOption
-
-        private ServiceMethodOption m_UpdateOption = new ServiceMethodOption("{0}Update");
-
-        [Description("Gets or sets the options for Update method.")]
-        public ServiceMethodOption UpdateOption {
-            get { return m_UpdateOption; }
-            set { m_UpdateOption = value; }
-        }
-
-        #endregion
-
-        #region DeleteOption
-
-        private ServiceMethodOption m_DeleteOption = new ServiceMethodOption("{0}Delete");
-
-        [Description("Gets or sets the options for Delete method.")]
-        public ServiceMethodOption DeleteOption {
-            get { return m_DeleteOption; }
-            set { m_DeleteOption = value; }
-        }
-
-        #endregion
-
-        #region DeleteByOption
-
-        private ServiceMethodOption m_DeleteByOption = new ServiceMethodOption("{0}DeleteBy{1}");
-
-        [Description("Gets or sets the options for DeleteBy method.")]
-        public ServiceMethodOption DeleteByOption {
-            get { return m_DeleteByOption; }
-            set { m_DeleteByOption = value; }
-        }
-
-        #endregion
-
-        #region ReloadOption
-
-        private ServiceMethodOption m_ReloadOption = new ServiceMethodOption("{0}Reload");
-
-        [Description("Gets or sets the options for Reload method.")]
-        public ServiceMethodOption ReloadOption {
-            get { return m_ReloadOption; }
-            set { m_ReloadOption = value; }
-        }
-
-        #endregion
-    
-    }
-	*/
-    #endregion
-	
-	
-	
-	
-	
-	#endregion
 }

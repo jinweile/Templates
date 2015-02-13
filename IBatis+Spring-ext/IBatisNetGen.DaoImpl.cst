@@ -66,9 +66,9 @@ if (Builder.DaoMethodSetOption.GetCountOption.GenerateImpl) { %>
 	/**
 	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.GetCountMethod %>
 	 */
-	public int <% =Builder.GetCountMethod %>() throws SQLException {
+	public int <% =Builder.GetCountMethod %>(Map param) throws SQLException {
 		String stmtId = "<% =Builder.GetCountStmtId %>";
-		int result = (Integer)<% =Builder.SqlMapper %>.queryForObject(stmtId);
+		int result = (Integer)<% =Builder.SqlMapper %>.queryForObject(stmtId, param);
 		return result;
 	}
 
@@ -84,19 +84,7 @@ if (Builder.DaoMethodSetOption.FindOption.GenerateImpl) { %>
 		return result;
 	}
 
-<%	} //if %>
-<%	//QuickFind
-if (Builder.HasLob && Builder.DaoMethodSetOption.FindNonLobOption.GenerateImpl) { %>
-	/**
-	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.FindNonLobMethod %>
-	 */
-	public <% =Builder.EntityName %> <% =Builder.FindNonLobMethod %>(<% =Builder.GetClrParamsDecl(Builder.PkColumns) %>) throws SQLException {
-		String stmtId = "<% =Builder.FindNonLobStmtId %>";
-		<% =Builder.EntityName %> result = (<% =Builder.EntityName %>) <% =Builder.SqlMapper %>.queryForObject(stmtId, <% =Builder.GetClrParamNames(Builder.PkColumns) %>);
-		return result;
-	}
-	
-<%	} //if %>
+<%	} %>
 <%	//FindAll
 if (Builder.DaoMethodSetOption.FindAllOption.GenerateIntf) { %>
 	/**
@@ -110,48 +98,6 @@ if (Builder.DaoMethodSetOption.FindAllOption.GenerateIntf) { %>
 	}
 	
 <%	} //if %>
-<%	//QuickFindAll
-if (Builder.DaoMethodSetOption.FindNonLobAllOption.GenerateIntf) { %>
-	/**
-	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.FindNonLobAllMethod %>
-	 */
-	@SuppressWarnings("unchecked")
-	public List<<% =Builder.EntityName %>> <% =Builder.FindNonLobAllMethod %>() throws SQLException {
-		String stmtId = "<% =Builder.FindNonLobAllStmtId %>";
-		List<<% =Builder.EntityName %>> result = <% =Builder.SqlMapper %>.queryForList(stmtId, null);
-		return result;
-	}
-	
-<%	} //if %>
-<%	//FindBy, QuickFindBy
-foreach (ColumnInfo c in Builder.FinderColumns) { 
-	//FindBy
-	if (Builder.DaoMethodSetOption.FindByOption.GenerateImpl) { %>
-	/**
-	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.FindByMethod(c) %>
-	 */
-	@SuppressWarnings("unchecked")
-	public List<<% =Builder.EntityName %>> <% =Builder.FindByMethod(c) %>(<% =c.ClrParamDecl %>) throws SQLException {
-		String stmtId = "<% =Builder.FindByStmtId(c) %>";
-		List<<% =Builder.EntityName %>> result = <% =Builder.SqlMapper %>.queryForList(stmtId, <% =c.ClrParamName %>);
-		return result;
-	}
-	
-<%		} //if	%>
-<%	//QuickFindBy
-	if (Builder.HasLob && Builder.DaoMethodSetOption.FindNonLobByOption.GenerateImpl) { %>
-	/**
-	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.FindNonLobByMethod(c) %>
-	 */
-	@SuppressWarnings("unchecked")
-	public List<<% =Builder.EntityName %>> <% =Builder.FindNonLobByMethod(c) %>(<% =c.ClrParamDecl %>) throws SQLException {
-		String stmtId = "<% =Builder.FindNonLobByStmtId(c) %>";
-		List<<% =Builder.EntityName %>> result = <% =Builder.SqlMapper %>.queryForList(stmtId, <% =c.ClrParamName %>);
-		return result;
-	}
-	
-<%		} //if	
-} //foreach %>
 <%	//Insert
 if (Builder.DaoMethodSetOption.InsertOption.GenerateImpl) { %>
 	/**
@@ -188,30 +134,6 @@ if (Builder.DaoMethodSetOption.DeleteOption.GenerateImpl) { %>
 	}
 	
 <%	} //if %>
-<%  //DeleteBy
-if (Builder.DaoMethodSetOption.DeleteByOption.GenerateImpl) { %>
-<%		foreach (ColumnInfo c in Builder.FinderColumns) { %>
-	/**
-	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.DeleteByMethod(c) %>
-	 */
-	public int <% =Builder.DeleteByMethod(c) %>(<% =c.ClrParamDecl %>) throws SQLException {
-		String stmtId = "<% =Builder.DeleteByStmtId(c) %>";
-		int result = <% =Builder.SqlMapper %>.delete(stmtId, <% =c.ClrParamName %>);
-		return result;
-	}
-	
-<%		} //foreach %>
-<%	} //if %>
-<%	//Reload
-if (Builder.DaoMethodSetOption.ReloadOption.GenerateImpl) { %>
-	/**
-	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.ReloadMethod %>
-	 */
-	public void <% =Builder.ReloadMethod %>(<% =Builder.EntityName %> obj) throws SQLException {
-		if (obj == null) throw new NullPointerException("obj");
-		String stmtId = "<% =Builder.FindStmtId %>";
-		<% =Builder.SqlMapper %>.queryForObject(stmtId, obj, obj);
-	}
-	
-<%	} //if %>
+
+
 }
