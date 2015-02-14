@@ -61,14 +61,16 @@ if (Builder.DaoMethodSetOption.FindOption.GenerateIntf) { %>
 	 */
 	<% =Builder.EntityName %> <% =Builder.FindMethod %>(<% =Builder.GetClrParamsDecl(Builder.PkColumns) %>) throws SQLException;
 
-<%	} //if %>
-<%	//QuickFind
-if (Builder.HasLob && Builder.DaoMethodSetOption.FindNonLobOption.GenerateIntf) { %>
-	/**
-	 *Finds a <% =Builder.EntityName %> instance by the primary key value without Lob columns loaded
+    /**
+	 *Finds list <% =Builder.EntityName %> instances by the map
 	 */
-	<% =Builder.EntityName %> <% =Builder.FindNonLobMethod %>(<% =Builder.GetClrParamsDecl(Builder.PkColumns) %>) throws SQLException;
-	
+    List<<% =Builder.EntityName %>> Select(Map param) throws SQLException;
+    
+    /**
+	 *Finds list page <% =Builder.EntityName %> instances by the map and start and end
+	 */
+    List<<% =Builder.EntityName %>> SelectPager(Map param,  int start, int end) throws SQLException;
+    
 <%	} //if %>
 <%	//FindAll
 if (Builder.DaoMethodSetOption.FindAllOption.GenerateIntf) { %>
@@ -78,33 +80,6 @@ if (Builder.DaoMethodSetOption.FindAllOption.GenerateIntf) { %>
 	List<<% =Builder.EntityName %>> <% =Builder.FindAllMethod %>() throws SQLException;
 	
 <%	} //if %>
-<%	//QuickFindAll
-if (Builder.DaoMethodSetOption.FindNonLobAllOption.GenerateIntf) { %>
-	/**
-	 *Finds all <% =Builder.EntityName %> instances without Lob columns loaded.
-	 */
-	List<<% =Builder.EntityName %>> <% =Builder.FindNonLobAllMethod %>() throws SQLException;
-	
-<%	} //if %>
-<%	//FindBy, FindByNonLob
-foreach (ColumnInfo c in Builder.FinderColumns) { 
-	//FindBy
-	if (Builder.DaoMethodSetOption.FindByOption.GenerateIntf) { %>
-	/**
-	 *Finds <% =Builder.EntityName %> instances by <% =c.PropName %> value.
-	 */
-	List<<% =Builder.EntityName %>> <% =Builder.FindByMethod(c) %>(<% =c.ClrParamDecl %>) throws SQLException;
-	
-<%		} //if	%>
-<%		//QuickFindBy
-	if (Builder.HasLob && Builder.DaoMethodSetOption.FindNonLobByOption.GenerateIntf) { %>
-	/**
-	 *Finds <% =Builder.EntityName %> instances by <% =c.PropName %> value without Lob columns loaded.
-	 */
-	List<<% =Builder.EntityName %>> <% =Builder.FindNonLobByMethod(c) %>(<% =c.ClrParamDecl %>) throws SQLException;
-	
-<%		} //if
-} //foreach %>
 <%	//Insert
 if (Builder.DaoMethodSetOption.InsertOption.GenerateIntf) { %>
 	/**
@@ -112,6 +87,11 @@ if (Builder.DaoMethodSetOption.InsertOption.GenerateIntf) { %>
 	 */
 	<% =Builder.PkColumns[0].ClrTypeDecl%> <% =Builder.InsertMethod %>(<% =Builder.EntityName %> obj) throws SQLException;
 	
+    /**
+	 *Inserts list <% =Builder.EntityName %> instances into underlying database table.
+	 */
+    void BatchInsert(List<<% =Builder.EntityName %>> list) throws SQLException;
+    
 <%	} //if %>
 <%	//Update
 if (Builder.DaoMethodSetOption.UpdateOption.GenerateIntf) { %>
@@ -119,6 +99,16 @@ if (Builder.DaoMethodSetOption.UpdateOption.GenerateIntf) { %>
 	 *Update the underlying database record of a <% =Builder.EntityName %> instance.
 	 */
 	int <% =Builder.UpdateMethod %>(<% =Builder.EntityName %> obj) throws SQLException;
+    
+    /**
+	 *Update the underlying database record of a <% =Builder.EntityName %> instance by map.
+	 */
+    int <% =Builder.UpdateMethod %>ByMap(Map param) throws SQLException;
+    
+    /**
+	 *Update the underlying database record of a <% =Builder.EntityName %> instance by model.
+	 */
+    int <% =Builder.UpdateMethod %>Dynamic(<% =Builder.EntityName %> model) throws SQLException;
 	
 <%	} //if %>
 <%	//Delete
@@ -127,24 +117,6 @@ if (Builder.DaoMethodSetOption.DeleteOption.GenerateIntf) { %>
 	 *Delete the underlying database record of a <% =Builder.EntityName %> instance.
 	 */
 	int <% =Builder.DeleteMethod %>(<% =Builder.EntityName %> obj) throws SQLException;
-	
-<%	} //if %>
-<%  //DeleteBy
-if (Builder.DaoMethodSetOption.DeleteByOption.GenerateIntf) { %>
-<%		foreach (ColumnInfo c in Builder.FinderColumns) { %>
-    /**
-	 *Deletes <% =Builder.EntityName %> instances by <% =Builder.EntityName + "." + c.PropName %>.
-	 */
-	int <% =Builder.DeleteByMethod(c) %>(<% =c.ClrParamDecl %>) throws SQLException;
-	
-<%		} //foreach %>
-<%	} //if %>
-<%	//Reload
-if (Builder.DaoMethodSetOption.ReloadOption.GenerateIntf) { %>
-	/**
-	 *Reload the underlying database record of a <% =Builder.EntityName %> instance.
-	 */
-	void <% =Builder.ReloadMethod %>(<% =Builder.EntityName %> obj) throws SQLException;
 	
 <%	} //if %>
 }

@@ -83,17 +83,6 @@ if (Builder.DaoMethodSetOption.FindOption.GenerateImpl) { %>
 	}
 
 <%	} //if %>
-<%	//QuickFind
-if (Builder.HasLob && Builder.DaoMethodSetOption.FindNonLobOption.GenerateImpl) { %>
-	/**
-	 *Implements <% =Builder.ServiceIntfName %>.<% =Builder.FindNonLobMethod %>
-	 */
-	public <% =Builder.EntityName %> <% =Builder.FindNonLobMethod %>(<% =Builder.GetClrParamsDecl(Builder.PkColumns) %>) throws SQLException {
-		<% =Builder.EntityName %> result = <% =Builder.Dao %>.<% =Builder.FindNonLobMethod %>(<% =Builder.GetClrParamNames(Builder.PkColumns) %>);
-		return result;
-	}
-	
-<%	} //if %>
 <%	//FindAll
 if (Builder.DaoMethodSetOption.FindAllOption.GenerateIntf) { %>
 	/**
@@ -105,42 +94,6 @@ if (Builder.DaoMethodSetOption.FindAllOption.GenerateIntf) { %>
 	}
 	
 <%	} //if %>
-<%	//QuickFindAll
-if (Builder.DaoMethodSetOption.FindNonLobAllOption.GenerateIntf) { %>
-	/**
-	 *Implements <% =Builder.ServiceIntfName %>.<% =Builder.FindNonLobAllMethod %>
-	 */
-	public List<<% =Builder.EntityName %>> <% =Builder.FindNonLobAllMethod %>() throws SQLException {
-		List<<% =Builder.EntityName %>> result = <% =Builder.Dao %>.<% =Builder.FindNonLobAllMethod %>();
-		return result;
-	}
-	
-<%	} //if %>
-<%	//FindBy, QuickFindBy
-foreach (ColumnInfo c in Builder.FinderColumns) { 
-	//FindBy
-	if (Builder.DaoMethodSetOption.FindByOption.GenerateImpl) { %>
-	/**
-	 *Implements <% =Builder.ServiceIntfName %>.<% =Builder.FindByMethod(c) %>
-	 */
-	public List<<% =Builder.EntityName %>> <% =Builder.FindByMethod(c) %>(<% =c.ClrParamDecl %>) throws SQLException {
-		List<<% =Builder.EntityName %>> result = <% =Builder.Dao %>.<% =Builder.FindByMethod(c) %>(<% =c.ClrParamName %>);
-		return result;
-	}
-	
-<%		} //if	%>
-<%	//QuickFindBy
-	if (Builder.HasLob && Builder.DaoMethodSetOption.FindNonLobByOption.GenerateImpl) { %>
-	/**
-	 *Implements <% =Builder.ServiceIntfName %>.<% =Builder.FindNonLobByMethod(c) %>
-	 */
-	public List<<% =Builder.EntityName %>> <% =Builder.FindNonLobByMethod(c) %>(<% =c.ClrParamDecl %>) throws SQLException {
-		List<<% =Builder.EntityName %>> result = <% =Builder.Dao %>.<% =Builder.FindNonLobByMethod(c) %>(<% =c.ClrParamName %>);
-		return result;
-	}
-	
-<%		} //if	
-} //foreach %>
 <%	//Insert
 if (Builder.DaoMethodSetOption.InsertOption.GenerateImpl) { %>
 	/**
@@ -171,30 +124,6 @@ if (Builder.DaoMethodSetOption.DeleteOption.GenerateImpl) { %>
 	public int <% =Builder.DeleteMethod %>(<% =Builder.EntityName %> obj) throws SQLException {
 		if (obj == null) throw new NullPointerException("obj");
 		return <% =Builder.Dao %>.<% =Builder.DeleteMethod %>(obj);
-	}
-	
-<%	} //if %>
-<%  //DeleteBy
-if (Builder.DaoMethodSetOption.DeleteByOption.GenerateImpl) { %>
-<%		foreach (ColumnInfo c in Builder.FinderColumns) { %>
-	/**
-	 *Implements <% =Builder.ServiceIntfName %>.<% =Builder.DeleteByMethod(c) %>
-	 */
-	public int <% =Builder.DeleteByMethod(c) %>(<% =c.ClrParamDecl %>) throws SQLException {
-		int result = <% =Builder.Dao %>.<% =Builder.DeleteByMethod(c) %>(<% =c.ClrParamName %>);
-		return result;
-	}
-	
-<%		} //foreach %>
-<%	} //if %>
-<%	//Reload
-if (Builder.DaoMethodSetOption.ReloadOption.GenerateImpl) { %>
-	/**
-	 *Implements <% =Builder.ServiceIntfName %>.<% =Builder.ReloadMethod %>
-	 */
-	public void <% =Builder.ReloadMethod %>(<% =Builder.EntityName %> obj) throws SQLException {
-		if (obj == null) throw new NullPointerException("obj");
-		<% =Builder.Dao %>.<% =Builder.ReloadMethod %>(obj);
 	}
 	
 <%	} //if %>
