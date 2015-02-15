@@ -29,10 +29,47 @@ Description: Generates Spring Bean from a database table. (see ibatis.apache.org
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 	<!-- daobean Start -->
-	<bean id="<% =Builder.DaoIntfName %>" class="<% =Builder.DaoImplNamespace %>.<% =Builder.DaoImplName %>">
+	<bean id="<% =Builder.DaoImplName %>" class="<% =Builder.DaoImplNamespace %>.<% =Builder.DaoImplName %>">
 		<property name="<% =Builder.SqlMapper %>">
 			<ref bean="sqlMapClient" />
 		</property>
 	</bean>
+	<!-- proxy -->
+	<bean id="<% =Builder.DaoIntfName %>" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="proxyInterfaces">
+			<value><% =Builder.DaoIntfNamespace %>.<% =Builder.DaoIntfName %></value>
+		</property>
+		<property name="target">
+			<ref bean="<% =Builder.DaoImplName %>" />
+		</property>
+	</bean>
 	<!-- daobean End -->
+	<!-- serviebean Start -->
+	<bean name="<% =Builder.ServiceImplName %>" class="<% =Builder.ServiceImplNamespace %>.<% =Builder.ServiceImplName %>">
+		<property name="<% =Builder.DaoImplName %>">
+			<ref bean="<% =Builder.DaoIntfName %>" />
+		</property>
+		<!-- <property name="MemcachedClient">
+			<ref bean="memcachedClient" />
+		</property> -->
+	</bean>
+	<!-- proxy,tran -->
+	<bean id="<% =Builder.ServiceIntfName %>" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="singleton">
+			<value>true</value>
+		</property>
+		<property name="proxyInterfaces">
+			<value><% =Builder.ServiceIntfNamespace %>.<% =Builder.ServiceIntfName %></value>
+		</property>
+		<property name="interceptorNames">
+			<list>
+				<value>transactionInterceptor</value>
+				<value><% =Builder.ServiceImplName %></value>
+			</list>
+		</property>
+		<property name="proxyTargetClass">
+			<value>true</value>
+		</property>
+	</bean>
+	<!-- serviebean End -->
 </beans>
