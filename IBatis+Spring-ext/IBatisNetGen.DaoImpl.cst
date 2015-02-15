@@ -27,6 +27,7 @@ Description: Generates the data access interface for IBatis (see ibatis.apache.o
 package <% =Builder.DaoImplNamespace %>;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.Date;
@@ -85,28 +86,30 @@ if (Builder.DaoMethodSetOption.FindOption.GenerateImpl) { %>
 	}
 
 	/**
-	 *Implements <% =Builder.DaoIntfName %>.Select
+	 *Implements <% =Builder.DaoIntfName %>.FindListByMap
 	 */
-    public List<<% =Builder.EntityName %>> Select(Map param) throws SQLException {
+    public List<<% =Builder.EntityName %>> FindListByMap(Map param) throws SQLException {
         String stmtId = "<% =Builder.SelectStmtId %>";
-        return <% =Builder.SqlMapper %>.QueryForList<<% =Builder.EntityName %>>(stmtId, param);
+        List<<% =Builder.EntityName %>> result = <% =Builder.SqlMapper %>.queryForList(stmtId, param);
+        return result;
     }
 
 	/**
-	 *Implements <% =Builder.DaoIntfName %>.SelectPager
+	 *Implements <% =Builder.DaoIntfName %>.FindListPage
 	 */           
-    public List<<% =Builder.EntityName %>> SelectPager(Map param,  int start, int end) throws SQLException {
+    public List<<% =Builder.EntityName %>> FindListPage(Map param,  int start, int end) throws SQLException {
         String stmtId = "<% =Builder.SelectPagerStmtId %>";
         if (param == null) {
             param = new HashMap();
         }
         if (start > 0) {
-            param.Add("Start", start);
+            param.put("Start", start);
         }
         if (end > 0) {
-            param.Add("End", end);
+            param.put("End", end);
         }
-        return <% =Builder.SqlMapper %>.QueryForList<<% =Builder.EntityName %>>(stmtId, param);
+        List<<% =Builder.EntityName %>> result = <% =Builder.SqlMapper %>.queryForList(stmtId, param);
+        return result;
     }
 
 <%	} %>
@@ -135,12 +138,12 @@ if (Builder.DaoMethodSetOption.InsertOption.GenerateImpl) { %>
 	}
     
 	/**
-	 *Implements <% =Builder.DaoIntfName %>.BatchInsert
+	 *Implements <% =Builder.DaoIntfName %>.InsertList
 	 */
-    public void BatchInsert(List<<% =Builder.EntityName %>> list) throws SQLException {
+    public void InsertList(List<<% =Builder.EntityName %>> list) throws SQLException {
         if (list == null || list.size() == 0) throw new NullPointerException("list");
         String stmtId = "<% =Builder.InsertStmtId %>Batch";
-	    <% =Builder.SqlMapper %>.Insert(stmtId, list);
+	    <% =Builder.SqlMapper %>.insert(stmtId, list);
     }
 	
 <%	} //if %>
@@ -160,7 +163,7 @@ if (Builder.DaoMethodSetOption.UpdateOption.GenerateImpl) { %>
 	 */
     public int <% =Builder.UpdateMethod %>ByMap(Map param) throws SQLException {
 		String stmtId = "<% =Builder.UpdateStmtId %>ByMap";
-		return <% =Builder.SqlMapper %>.Update(stmtId, param);
+		return <% =Builder.SqlMapper %>.update(stmtId, param);
 	}
     
 	/**
@@ -169,7 +172,7 @@ if (Builder.DaoMethodSetOption.UpdateOption.GenerateImpl) { %>
     public int <% =Builder.UpdateMethod %>Dynamic(<% =Builder.EntityName %> model) throws SQLException {
 		if (model == null) throw new NullPointerException("model");
 		String stmtId = "<% =Builder.UpdateStmtId %>Dynamic";
-		return <% =Builder.SqlMapper %>.Update(stmtId, model);
+		return <% =Builder.SqlMapper %>.update(stmtId, model);
 	}
 	
 <%	} //if %>

@@ -49,9 +49,6 @@ Description: Generates Spring Bean from a database table. (see ibatis.apache.org
 		<property name="<% =Builder.DaoImplName %>">
 			<ref bean="<% =Builder.DaoIntfName %>" />
 		</property>
-		<!-- <property name="MemcachedClient">
-			<ref bean="memcachedClient" />
-		</property> -->
 	</bean>
 	<!-- proxy,tran -->
 	<bean id="<% =Builder.ServiceIntfName %>" class="org.springframework.aop.framework.ProxyFactoryBean">

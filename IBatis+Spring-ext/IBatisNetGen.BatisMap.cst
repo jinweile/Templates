@@ -109,7 +109,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 		</selectKey>
 	</insert>
     
-	<insert id="<% =Builder.InsertStmtId %>Batch" parameterClass="List">
+	<insert id="<% =Builder.InsertStmtId %>Batch" parameterClass="java.util.List">
         INSERT INTO <% =Builder.TableName %> (
 			<% for (int i = 0; i < Builder.NonPkColumns.Count; i++) { 
 			    ColumnInfo c = Builder.NonPkColumns[i]; %>
@@ -180,14 +180,14 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 			<%	} %>
 	</delete>
 
-    <select id="<% =Builder.SelectStmtId %>"  parameterClass="java.util.Map"  resultMap="<% =Builder.NonLobResultMapId %>">
+    <select id="<% =Builder.SelectStmtId %>"  parameterClass="java.util.Map"  resultMap="<% =Builder.FullResultMapId %>">
         <%--<!--sqlserver-->
         SELECT
             <isPropertyAvailable property="Top">
                 Top $Top$
             </isPropertyAvailable>
-            <% for (int i = 0; i < Builder.NonLobColumns.Count; i ++) {
-                ColumnInfo c = Builder.NonLobColumns[i];%>
+            <% for (int i = 0; i < Builder.Columns.Count; i ++) {
+                ColumnInfo c = Builder.Columns[i];%>
                 <% if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
             <% } %>
     		FROM <% =Builder.TableName %>
@@ -210,8 +210,8 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
         </isPropertyAvailable>--%>
         <!--mysql-->
         SELECT
-            <% for (int i = 0; i < Builder.NonLobColumns.Count; i ++) {
-                ColumnInfo c = Builder.NonLobColumns[i];%>
+            <% for (int i = 0; i < Builder.Columns.Count; i ++) {
+                ColumnInfo c = Builder.Columns[i];%>
                 <% if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
             <% } %>
     		FROM <% =Builder.TableName %>
@@ -242,11 +242,11 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
         </dynamic>
     </select>  
 
-    <select id="<% =Builder.SelectPagerStmtId %>" parameterClass="java.util.Map" resultMap="<% =Builder.NonLobResultMapId %>">
+    <select id="<% =Builder.SelectPagerStmtId %>" parameterClass="java.util.Map" resultMap="<% =Builder.FullResultMapId %>">
         <%--<!--sqlserver-->
         SELECT * from (select ROW_NUMBER() over(order BY $OrderBy$) RowNumber,
-            <% for (int i = 0; i < Builder.NonLobColumns.Count; i ++) {
-    		    ColumnInfo c = Builder.NonLobColumns[i];%>
+            <% for (int i = 0; i < Builder.Columns.Count; i ++) {
+    		    ColumnInfo c = Builder.Columns[i];%>
     		    <% if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
             <% } %>
     		FROM <% =Builder.TableName %>
@@ -268,9 +268,9 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
             </isPropertyAvailable>
         </dynamic>--%>
         <!--mysql-->
-        SELECT * from
-            <% for (int i = 0; i < Builder.NonLobColumns.Count; i ++) {
-    		    ColumnInfo c = Builder.NonLobColumns[i];%>
+        SELECT
+            <% for (int i = 0; i < Builder.Columns.Count; i ++) {
+    		    ColumnInfo c = Builder.Columns[i];%>
     		    <% if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
             <% } %>
     		FROM <% =Builder.TableName %>

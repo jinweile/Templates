@@ -66,8 +66,8 @@ if (Builder.DaoMethodSetOption.GetCountOption.GenerateImpl) { %>
 	/**
 	 *Implements <% =Builder.ServiceIntfName %>.<% =Builder.GetCountMethod %>
 	 */
-	public int <% =Builder.GetCountMethod %>() throws SQLException {
-		int result = <% =Builder.Dao %>.<% =Builder.GetCountMethod %>();
+	public int <% =Builder.GetCountMethod %>(Map param) throws SQLException {
+		int result = <% =Builder.Dao %>.<% =Builder.GetCountMethod %>(param);
 		return result;
 	}
 
@@ -81,6 +81,22 @@ if (Builder.DaoMethodSetOption.FindOption.GenerateImpl) { %>
 		<% =Builder.EntityName %> result = <% =Builder.Dao %>.<% =Builder.FindMethod %>(<% =Builder.GetClrParamNames(Builder.PkColumns) %>);
 		return result;
 	}
+    
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.FindListByMap
+	 */
+    public List<<% =Builder.EntityName %>> FindListByMap(Map param) throws SQLException {
+        List<<% =Builder.EntityName %>> result = <% =Builder.Dao %>.FindListByMap(param);
+        return result;
+    }
+
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.FindListPage
+	 */           
+    public List<<% =Builder.EntityName %>> FindListPage(Map param,  int start, int end) throws SQLException {
+        List<<% =Builder.EntityName %>> result = <% =Builder.Dao %>.FindListPage(param, start, end);
+        return result;
+    }
 
 <%	} //if %>
 <%	//FindAll
@@ -103,6 +119,13 @@ if (Builder.DaoMethodSetOption.InsertOption.GenerateImpl) { %>
 		if (obj == null) throw new NullPointerException("obj");
 		return <% =Builder.Dao %>.<% =Builder.InsertMethod %>(obj);
 	}
+    
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.InsertList
+	 */
+    public void InsertList(List<<% =Builder.EntityName %>> list) throws SQLException {
+        <% =Builder.Dao %>.InsertList(list);
+    }
 	
 <%	} //if %>
 <%	//Update
@@ -113,6 +136,21 @@ if (Builder.DaoMethodSetOption.UpdateOption.GenerateImpl) { %>
 	public int <% =Builder.UpdateMethod %>(<% =Builder.EntityName %> obj) throws SQLException {
 		if (obj == null) throw new NullPointerException("obj");
 		return <% =Builder.Dao %>.<% =Builder.UpdateMethod %>(obj);
+	}
+    
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.UpdateMethod %>ByMap
+	 */
+    public int <% =Builder.UpdateMethod %>ByMap(Map param) throws SQLException {
+		return <% =Builder.Dao %>.<% =Builder.UpdateMethod %>ByMap(param);
+	}
+    
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.UpdateMethod %>Dynamic
+	 */
+    public int <% =Builder.UpdateMethod %>Dynamic(<% =Builder.EntityName %> model) throws SQLException {
+		if (model == null) throw new NullPointerException("model");
+		return <% =Builder.Dao %>.<% =Builder.UpdateMethod %>Dynamic(model);
 	}
 	
 <%	} //if %>
