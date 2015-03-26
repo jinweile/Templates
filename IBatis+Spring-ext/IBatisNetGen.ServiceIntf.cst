@@ -86,6 +86,11 @@ if (Builder.DaoMethodSetOption.InsertOption.GenerateIntf) { %>
 	 *Inserts a new <% =Builder.EntityName %> instance into underlying database table.
 	 */
 	<% =Builder.PkColumns[0].ClrTypeDecl%> <% =Builder.InsertMethod %>(<% =Builder.EntityName %> obj) throws SQLException;
+    
+	/**
+	 *Inserts a new <% =Builder.EntityName %> instance into underlying database table.
+	 */
+	<% =Builder.PkColumns[0].ClrTypeDecl%> <% =Builder.InsertMethod %>Map(Map obj) throws SQLException;
 	
     /**
 	 *Inserts list <% =Builder.EntityName %> instances into underlying database table.

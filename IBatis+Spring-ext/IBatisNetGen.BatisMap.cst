@@ -109,6 +109,40 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 		</selectKey>
 	</insert>
     
+	<insert id="<% =Builder.InsertStmtId %>Map" parameterClass="java.util.Map">
+        <%--<!--oracle-->
+        <!--<selectKey keyProperty="innerUserID" resultType="Long" order="BEFORE">
+          select SQ_ADMIN_SEQ.nextval from dual
+        </selectKey>-->--%>
+		INSERT INTO <% =Builder.TableName %> 
+        <dynamic prepend="(">
+			<%
+			    	for (int i = 0; i < Builder.NonPkColumns.Count; i++) { 
+					ColumnInfo c = Builder.NonPkColumns[i]; %>
+                <isPropertyAvailable property="<% =c.VarName %>" prepend=",">
+			        <% =c.ResultColumnName %>
+                </isPropertyAvailable>
+			<% 	} %>
+        </dynamic>
+        <dynamic prepend=") VALUES (">
+			<% 	for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+					ColumnInfo c = Builder.NonPkColumns[i];		%>
+                <isPropertyAvailable property="<% =c.VarName %>" prepend=",">
+			        #<% =c.VarName %>#
+                </isPropertyAvailable>
+			<% 	} %>
+        </dynamic>
+		)
+		<selectKey resultClass="<% =Builder.PkColumns[0].ClrTypeDecl%>" keyProperty="<% =Builder.PkColumns[0].VarName%>" >
+            <%--<!--sqlite-->
+            <!--select last_insert_rowid() as value-->--%>
+            <!--mysql-->
+			select LAST_INSERT_ID() as value
+            <%--<!--sqlserver-->
+			<!--select @@identity as value-->--%>
+		</selectKey>
+	</insert>
+    
 	<insert id="<% =Builder.InsertStmtId %>Batch" parameterClass="java.util.List">
         INSERT INTO <% =Builder.TableName %> (
 			<% for (int i = 0; i < Builder.NonPkColumns.Count; i++) { 
@@ -157,7 +191,7 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
 	</update>
 
     <update id="<% =Builder.UpdateStmtId %>Dynamic" parameterClass="<% =Builder.EntityName %>">
-		UPDATE <% =Builder.QualifiedTableName %> 
+		UPDATE <% =Builder.TableName %> 
         <dynamic prepend="SET">
 			<% for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
 			    ColumnInfo c = Builder.NonPkColumns[i]; 	%>

@@ -121,6 +121,14 @@ if (Builder.DaoMethodSetOption.InsertOption.GenerateImpl) { %>
 	}
     
 	/**
+	 *Implements <% =Builder.ServiceIntfName %>.<% =Builder.InsertMethod %>Map
+	 */
+	public <% =Builder.PkColumns[0].ClrTypeDecl%> <% =Builder.InsertMethod %>Map(Map obj) throws SQLException {
+		if (obj == null) throw new NullPointerException("obj");
+		return <% =Builder.Dao %>.<% =Builder.InsertMethod %>Map(obj);
+	}
+    
+	/**
 	 *Implements <% =Builder.DaoIntfName %>.InsertList
 	 */
     public void InsertList(List<<% =Builder.EntityName %>> list) throws SQLException {

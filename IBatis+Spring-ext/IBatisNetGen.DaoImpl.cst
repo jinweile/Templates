@@ -138,6 +138,15 @@ if (Builder.DaoMethodSetOption.InsertOption.GenerateImpl) { %>
 	}
     
 	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.InsertMethod %>Map
+	 */
+	public <% =Builder.PkColumns[0].ClrTypeDecl%> <% =Builder.InsertMethod %>Map(Map obj) throws SQLException {
+		if (obj == null) throw new NullPointerException("obj");
+		String stmtId = "<% =Builder.InsertStmtId %>Map";
+		return (<% =Builder.PkColumns[0].ClrTypeDecl%>) <% =Builder.SqlMapper %>.insert(stmtId, obj);
+	}
+    
+	/**
 	 *Implements <% =Builder.DaoIntfName %>.InsertList
 	 */
     public void InsertList(List<<% =Builder.EntityName %>> list) throws SQLException {
