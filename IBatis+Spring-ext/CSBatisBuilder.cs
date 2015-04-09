@@ -519,7 +519,7 @@ namespace CSBatisBuilder {
 
         #region GetCountOption
 
-        private DaoMethodOption m_GetCountOption = new DaoMethodOption("{0}GetCount");
+        private DaoMethodOption m_GetCountOption = new DaoMethodOption("{0}getCount");//{0}GetCount
 
         [Description("Gets or sets the options for GetCount method.")]
         public DaoMethodOption GetCountOption {
@@ -531,7 +531,7 @@ namespace CSBatisBuilder {
 
         #region FindOption
 
-        private DaoMethodOption m_FindOption = new DaoMethodOption("{0}Find");
+        private DaoMethodOption m_FindOption = new DaoMethodOption("{0}find");//{0}Find
 
         [Description("Gets or sets the options for Find by primary key method.")]
         public DaoMethodOption FindOption {
@@ -543,7 +543,7 @@ namespace CSBatisBuilder {
 
         #region FindNonLobOption
 
-        private DaoMethodOption m_FindNonLobOption = new DaoMethodOption("{0}QuickFind");
+        private DaoMethodOption m_FindNonLobOption = new DaoMethodOption("{0}quickFind");
 
         [Description("Gets or sets the options for FindNonLob method.")]
         public DaoMethodOption FindNonLobOption {
@@ -555,7 +555,7 @@ namespace CSBatisBuilder {
 
         #region FindAllOption
 
-        private DaoMethodOption m_FindAllOption = new DaoMethodOption("{0}FindAll");
+        private DaoMethodOption m_FindAllOption = new DaoMethodOption("{0}findAll");
 
         [Description("Gets or sets the options for FindAll method.")]
         public DaoMethodOption FindAllOption {
@@ -567,7 +567,7 @@ namespace CSBatisBuilder {
 
         #region FindNonLobAllOption
 
-        private DaoMethodOption m_FindNonLobAllOption = new DaoMethodOption("{0}QuickFindAll");
+        private DaoMethodOption m_FindNonLobAllOption = new DaoMethodOption("{0}quickFindAll");
 
         [Description("Gets or sets the options for FindNonLobAll method.")]
         public DaoMethodOption FindNonLobAllOption {
@@ -579,7 +579,7 @@ namespace CSBatisBuilder {
 
         #region FindByOption
 
-        private DaoMethodOption m_FindByOption = new DaoMethodOption("{0}FindBy{1}");
+        private DaoMethodOption m_FindByOption = new DaoMethodOption("{0}findBy{1}");
 
         [Description("Gets or sets the options for FindBy method.")]
         public DaoMethodOption FindByOption {
@@ -591,7 +591,7 @@ namespace CSBatisBuilder {
 
         #region FindNonLobByOption
 
-        private DaoMethodOption m_FindNonLobByOption = new DaoMethodOption("{0}QuickFindBy{1}");
+        private DaoMethodOption m_FindNonLobByOption = new DaoMethodOption("{0}quickFindBy{1}");
 
         [Description("Gets or sets the options for FindNonLobBy method.")]
         public DaoMethodOption FindNonLobByOption {
@@ -603,7 +603,7 @@ namespace CSBatisBuilder {
 
         #region InsertOption
 
-        private DaoMethodOption m_InsertOption = new DaoMethodOption("{0}Insert");
+        private DaoMethodOption m_InsertOption = new DaoMethodOption("{0}insert");
 
         [Description("Gets or sets the options for Insert method.")]
         public DaoMethodOption InsertOption {
@@ -615,7 +615,7 @@ namespace CSBatisBuilder {
 
         #region UpdateOption
 
-        private DaoMethodOption m_UpdateOption = new DaoMethodOption("{0}Update");
+        private DaoMethodOption m_UpdateOption = new DaoMethodOption("{0}update");
 
         [Description("Gets or sets the options for Update method.")]
         public DaoMethodOption UpdateOption {
@@ -627,7 +627,7 @@ namespace CSBatisBuilder {
 
         #region DeleteOption
 
-        private DaoMethodOption m_DeleteOption = new DaoMethodOption("{0}Delete");
+        private DaoMethodOption m_DeleteOption = new DaoMethodOption("{0}delete");
 
         [Description("Gets or sets the options for Delete method.")]
         public DaoMethodOption DeleteOption {
@@ -639,7 +639,7 @@ namespace CSBatisBuilder {
 
         #region DeleteByOption
 
-        private DaoMethodOption m_DeleteByOption = new DaoMethodOption("{0}DeleteBy{1}");
+        private DaoMethodOption m_DeleteByOption = new DaoMethodOption("{0}deleteBy{1}");
 
         [Description("Gets or sets the options for DeleteBy method.")]
         public DaoMethodOption DeleteByOption {
@@ -651,7 +651,7 @@ namespace CSBatisBuilder {
 
         #region ReloadOption
 
-        private DaoMethodOption m_ReloadOption = new DaoMethodOption("{0}Reload");
+        private DaoMethodOption m_ReloadOption = new DaoMethodOption("{0}reload");
 
         [Description("Gets or sets the options for Reload method.")]
         public DaoMethodOption ReloadOption {
@@ -2379,11 +2379,11 @@ namespace CSBatisBuilder {
         }
         
         public string SelectStmtId {
-            get{ return String.Format("{0}Select", IdBase); }
+            get{ return String.Format("{0}select", IdBase); }
         }
         
         public string SelectPagerStmtId {
-            get{ return String.Format("{0}SelectPager", IdBase); }
+            get{ return String.Format("{0}selectPager", IdBase); }
         }
 
         [Category(Categories.DebugInfo)]
