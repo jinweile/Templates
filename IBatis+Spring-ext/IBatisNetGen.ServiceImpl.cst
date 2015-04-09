@@ -83,18 +83,18 @@ if (Builder.DaoMethodSetOption.FindOption.GenerateImpl) { %>
 	}
     
 	/**
-	 *Implements <% =Builder.DaoIntfName %>.FindListByMap
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.FindListByMap %>
 	 */
-    public List<<% =Builder.EntityName %>> FindListByMap(Map param) throws SQLException {
-        List<<% =Builder.EntityName %>> result = <% =Builder.Dao %>.FindListByMap(param);
+    public List<<% =Builder.EntityName %>> <% =Builder.FindListByMap %>(Map param) throws SQLException {
+        List<<% =Builder.EntityName %>> result = <% =Builder.Dao %>.<% =Builder.FindListByMap %>(param);
         return result;
     }
 
 	/**
-	 *Implements <% =Builder.DaoIntfName %>.FindListPage
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.FindListPage %>
 	 */           
-    public List<<% =Builder.EntityName %>> FindListPage(Map param,  int start, int end) throws SQLException {
-        List<<% =Builder.EntityName %>> result = <% =Builder.Dao %>.FindListPage(param, start, end);
+    public List<<% =Builder.EntityName %>> <% =Builder.FindListPage %>(Map param,  int start, int end) throws SQLException {
+        List<<% =Builder.EntityName %>> result = <% =Builder.Dao %>.<% =Builder.FindListPage %>(param, start, end);
         return result;
     }
 
@@ -129,10 +129,10 @@ if (Builder.DaoMethodSetOption.InsertOption.GenerateImpl) { %>
 	}
     
 	/**
-	 *Implements <% =Builder.DaoIntfName %>.InsertList
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.InsertList %>
 	 */
-    public void InsertList(List<<% =Builder.EntityName %>> list) throws SQLException {
-        <% =Builder.Dao %>.InsertList(list);
+    public void <% =Builder.InsertList %>(List<<% =Builder.EntityName %>> list) throws SQLException {
+        <% =Builder.Dao %>.<% =Builder.InsertList %>(list);
     }
 	
 <%	} //if %>

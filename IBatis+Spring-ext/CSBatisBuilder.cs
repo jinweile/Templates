@@ -2297,62 +2297,77 @@ namespace CSBatisBuilder {
 
         [Category(Categories.DebugInfo)]
         public string GetCountMethod {
-            get { return String.Format(DaoMethodSetOption.GetCountOption.IdFmt, String.Empty); }
+            get { return String.Format("{0}getCount", String.Empty); }//DaoMethodSetOption.GetCountOption.IdFmt
         }
 
         [Category(Categories.DebugInfo)]
         public string FindMethod {
-            get { return String.Format(DaoMethodSetOption.FindOption.IdFmt, String.Empty); }
+            get { return String.Format("{0}find", String.Empty); }//DaoMethodSetOption.FindOption.IdFmt
         }
 
         [Category(Categories.DebugInfo)]
         public string FindNonLobMethod {
-            get { return String.Format(DaoMethodSetOption.FindNonLobOption.IdFmt, String.Empty); }
+            get { return String.Format("{0}findNonLob", String.Empty); }//DaoMethodSetOption.FindNonLobOption.IdFmt
         }
 
         [Category(Categories.DebugInfo)]
         public string FindAllMethod {
-            get { return String.Format(DaoMethodSetOption.FindAllOption.IdFmt, String.Empty); }
+            get { return String.Format("{0}findAll", String.Empty); }//DaoMethodSetOption.FindAllOption.IdFmt
         }
 
         [Category(Categories.DebugInfo)]
         public string FindNonLobAllMethod {
-            get { return String.Format(DaoMethodSetOption.FindNonLobAllOption.IdFmt, String.Empty); }
+            get { return String.Format("{0}findNonLobAll", String.Empty); }//DaoMethodSetOption.FindNonLobAllOption.IdFmt
         }
 
         public string FindByMethod(ColumnInfo column) {
             String name = column.PropName;
-            return String.Format(DaoMethodSetOption.FindByOption.IdFmt, String.Empty, name);
+            return String.Format("{0}findBy{1}", String.Empty, name);//DaoMethodSetOption.FindByOption.IdFmt
         }
 
         public string FindNonLobByMethod(ColumnInfo column) {
             String name = column.PropName;
-            return String.Format(DaoMethodSetOption.FindNonLobByOption.IdFmt, String.Empty, name);
+            return String.Format("{0}findNonLobBy{1}", String.Empty, name);//DaoMethodSetOption.FindNonLobByOption.IdFmt
         }
 
         [Category(Categories.DebugInfo)]
         public string InsertMethod {
-            get { return String.Format(DaoMethodSetOption.InsertOption.IdFmt, String.Empty); }
+            get { return String.Format("{0}insert", String.Empty); }//DaoMethodSetOption.InsertOption.IdFmt
         }
 
         [Category(Categories.DebugInfo)]
         public string UpdateMethod {
-            get { return String.Format(DaoMethodSetOption.UpdateOption.IdFmt, String.Empty); }
+            get { return String.Format("{0}update", String.Empty); }//DaoMethodSetOption.UpdateOption.IdFmt
         }
 
         [Category(Categories.DebugInfo)]
         public string DeleteMethod {
-            get { return String.Format(DaoMethodSetOption.DeleteOption.IdFmt, String.Empty); }
+            get { return String.Format("{0}delete", String.Empty); }//DaoMethodSetOption.DeleteOption.IdFmt
         }
 
         public string DeleteByMethod(ColumnInfo column) {
             String name = column.PropName;
-            return String.Format(DaoMethodSetOption.DeleteByOption.IdFmt, String.Empty, name);
+            return String.Format("{0}deleteBy{1}", String.Empty, name);//DaoMethodSetOption.DeleteByOption.IdFmt
         }
 
         [Category(Categories.DebugInfo)]
         public string ReloadMethod {
-            get { return String.Format(DaoMethodSetOption.ReloadOption.IdFmt, String.Empty); }
+            get { return String.Format("{0}reload", String.Empty); }//DaoMethodSetOption.ReloadOption.IdFmt
+        }
+        
+        [Category(Categories.DebugInfo)]
+        public string FindListByMap {
+            get { return String.Format("{0}findListByMap", String.Empty); }
+        }
+        
+        [Category(Categories.DebugInfo)]
+        public string FindListPage {
+            get { return String.Format("{0}findListPage", String.Empty); }
+        }
+        
+        [Category(Categories.DebugInfo)]
+        public string InsertList {
+            get { return String.Format("{0}insertList", String.Empty); }
         }
 
         #endregion

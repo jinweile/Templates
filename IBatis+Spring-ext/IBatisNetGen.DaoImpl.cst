@@ -86,18 +86,18 @@ if (Builder.DaoMethodSetOption.FindOption.GenerateImpl) { %>
 	}
 
 	/**
-	 *Implements <% =Builder.DaoIntfName %>.FindListByMap
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.FindListByMap %>
 	 */
-    public List<<% =Builder.EntityName %>> FindListByMap(Map param) throws SQLException {
+    public List<<% =Builder.EntityName %>> <% =Builder.FindListByMap %>(Map param) throws SQLException {
         String stmtId = "<% =Builder.SelectStmtId %>";
         List<<% =Builder.EntityName %>> result = <% =Builder.SqlMapper %>.queryForList(stmtId, param);
         return result;
     }
 
 	/**
-	 *Implements <% =Builder.DaoIntfName %>.FindListPage
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.FindListPage %>
 	 */           
-    public List<<% =Builder.EntityName %>> FindListPage(Map param,  int start, int end) throws SQLException {
+    public List<<% =Builder.EntityName %>> <% =Builder.FindListPage %>(Map param,  int start, int end) throws SQLException {
         String stmtId = "<% =Builder.SelectPagerStmtId %>";
         if (param == null) {
             param = new HashMap();
@@ -147,9 +147,9 @@ if (Builder.DaoMethodSetOption.InsertOption.GenerateImpl) { %>
 	}
     
 	/**
-	 *Implements <% =Builder.DaoIntfName %>.InsertList
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.InsertList %>
 	 */
-    public void InsertList(List<<% =Builder.EntityName %>> list) throws SQLException {
+    public void <% =Builder.InsertList %>(List<<% =Builder.EntityName %>> list) throws SQLException {
         if (list == null || list.size() == 0) throw new NullPointerException("list");
         String stmtId = "<% =Builder.InsertStmtId %>Batch";
 	    <% =Builder.SqlMapper %>.insert(stmtId, list);

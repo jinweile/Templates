@@ -64,12 +64,12 @@ if (Builder.DaoMethodSetOption.FindOption.GenerateIntf) { %>
     /**
 	 *Finds list <% =Builder.EntityName %> instances by the map
 	 */
-    List<<% =Builder.EntityName %>> FindListByMap(Map param) throws SQLException;
+    List<<% =Builder.EntityName %>> <% =Builder.FindListByMap %>(Map param) throws SQLException;
     
     /**
 	 *Finds list page <% =Builder.EntityName %> instances by the map and start and end
 	 */
-    List<<% =Builder.EntityName %>> FindListPage(Map param,  int start, int end) throws SQLException;
+    List<<% =Builder.EntityName %>> <% =Builder.FindListPage %>(Map param,  int start, int end) throws SQLException;
     
 <%	} //if %>
 <%	//FindAll
@@ -95,7 +95,7 @@ if (Builder.DaoMethodSetOption.InsertOption.GenerateIntf) { %>
     /**
 	 *Inserts list <% =Builder.EntityName %> instances into underlying database table.
 	 */
-    void InsertList(List<<% =Builder.EntityName %>> list) throws SQLException;
+    void <% =Builder.InsertList %>(List<<% =Builder.EntityName %>> list) throws SQLException;
     
 <%	} //if %>
 <%	//Update
