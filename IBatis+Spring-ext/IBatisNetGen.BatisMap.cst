@@ -270,8 +270,8 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
             <isPropertyAvailable prepend="," property="Start">
                 #Start#
             </isPropertyAvailable>
-            <isPropertyAvailable prepend="," property="End">
-                #End#
+            <isPropertyAvailable prepend="," property="PageCount">
+                #PageCount#
             </isPropertyAvailable>
         </dynamic>
     </select>  
@@ -323,8 +323,8 @@ Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
             <isPropertyAvailable prepend="," property="Start">
                 #Start#
             </isPropertyAvailable>
-            <isPropertyAvailable prepend="," property="End">
-                #End#
+            <isPropertyAvailable prepend="," property="PageCount">
+                #PageCount#
             </isPropertyAvailable>
         </dynamic>
     </select>

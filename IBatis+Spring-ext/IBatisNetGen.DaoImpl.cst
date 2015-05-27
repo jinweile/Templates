@@ -105,8 +105,13 @@ if (Builder.DaoMethodSetOption.FindOption.GenerateImpl) { %>
         if (start > 0) {
             param.put("Start", start);
         }
+        <%-- sqlserver
         if (end > 0) {
             param.put("End", end);
+        }
+        --%>
+        if (end > 0) {
+            param.put("PageCount", end - start);
         }
         List<<% =Builder.EntityName %>> result = <% =Builder.SqlMapper %>.queryForList(stmtId, param);
         return result;
