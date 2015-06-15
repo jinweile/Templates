@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+	
+<mapper namespace="com.shangpin.iog.dao.ISKUDao">
+
+	<resultMap id="SKU-FullResultMap" class="SKU">
+		<result property="iD" column="ID"/>
+		<result property="sUPPLIERID" column="SUPPLIER_ID"/>
+		<result property="sPUID" column="SPU_ID"/>
+		<result property="iD" column="SKU_ID"/>
+		<result property="pRODUCTNAME" column="PRODUCT_NAME"/>
+		<result property="sUPPLIERPRICE" column="SUPPLIER_PRICE"/>
+		<result property="bARCODE" column="BARCODE"/>
+		<result property="pRODUCTCODE" column="PRODUCT_CODE"/>
+		<result property="cOLOR" column="COLOR"/>
+		<result property="pRODUCTDESCRIBE" column="PRODUCT_DESCRIBE"/>
+		<result property="sALECURRENCY" column="SALE_CURRENCY"/>
+		<result property="pRODUCTSIZE" column="PRODUCT_SIZE"/>
+		<result property="sTOCK" column="STOCK"/>
+		<result property="cREATETIME" column="CREATE_TIME"/>
+		<result property="lASTTIME" column="LAST_TIME"/>
+	</resultMap>
+	<resultMap id="SKU-NonLobResultMap" class="SKU">
+		<result property="iD" column="ID"/>
+		<result property="sUPPLIERID" column="SUPPLIER_ID"/>
+		<result property="sPUID" column="SPU_ID"/>
+		<result property="iD" column="SKU_ID"/>
+		<result property="pRODUCTNAME" column="PRODUCT_NAME"/>
+		<result property="sUPPLIERPRICE" column="SUPPLIER_PRICE"/>
+		<result property="bARCODE" column="BARCODE"/>
+		<result property="pRODUCTCODE" column="PRODUCT_CODE"/>
+		<result property="cOLOR" column="COLOR"/>
+		<result property="sALECURRENCY" column="SALE_CURRENCY"/>
+		<result property="pRODUCTSIZE" column="PRODUCT_SIZE"/>
+		<result property="sTOCK" column="STOCK"/>
+		<result property="cREATETIME" column="CREATE_TIME"/>
+		<result property="lASTTIME" column="LAST_TIME"/>
+	</resultMap>
+
+	<select id="getCount" parameterType="java.util.Map" resultType="Integer">
+		SELECT count(1) FROM SKU
+        <trim prefix="WHERE" prefixOverrides="AND|OR ">
+            <if test="sUPPLIERID!=null">
+    		  and SUPPLIER_ID = #{sUPPLIERID}
+            </if>
+            <if test="sPUID!=null">
+    		  and SPU_ID = #{sPUID}
+            </if>
+            <if test="iD!=null">
+    		  and SKU_ID = #{iD}
+            </if>
+            <if test="pRODUCTNAME!=null">
+    		  and PRODUCT_NAME = #{pRODUCTNAME}
+            </if>
+            <if test="sUPPLIERPRICE!=null">
+    		  and SUPPLIER_PRICE = #{sUPPLIERPRICE}
+            </if>
+            <if test="bARCODE!=null">
+    		  and BARCODE = #{bARCODE}
+            </if>
+            <if test="pRODUCTCODE!=null">
+    		  and PRODUCT_CODE = #{pRODUCTCODE}
+            </if>
+            <if test="cOLOR!=null">
+    		  and COLOR = #{cOLOR}
+            </if>
+            <if test="pRODUCTDESCRIBE!=null">
+    		  and PRODUCT_DESCRIBE = #{pRODUCTDESCRIBE}
+            </if>
+            <if test="sALECURRENCY!=null">
+    		  and SALE_CURRENCY = #{sALECURRENCY}
+            </if>
+            <if test="pRODUCTSIZE!=null">
+    		  and PRODUCT_SIZE = #{pRODUCTSIZE}
+            </if>
+            <if test="sTOCK!=null">
+    		  and STOCK = #{sTOCK}
+            </if>
+            <if test="cREATETIME!=null">
+    		  and CREATE_TIME = #{cREATETIME}
+            </if>
+            <if test="lASTTIME!=null">
+    		  and LAST_TIME = #{lASTTIME}
+            </if>
+        </trim>
+	</select>
+	
+	<select id="findAll" resultMap="SKU-FullResultMap">
+		SELECT
+            ID
+            , SUPPLIER_ID
+            , SPU_ID
+            , SKU_ID
+            , PRODUCT_NAME
+            , SUPPLIER_PRICE
+            , BARCODE
+            , PRODUCT_CODE
+            , COLOR
+            , PRODUCT_DESCRIBE
+            , SALE_CURRENCY
+            , PRODUCT_SIZE
+            , STOCK
+            , CREATE_TIME
+            , LAST_TIME
+		FROM SKU
+	</select>
+	
+	<select id="find" parameterType="String" resultMap="SKU-FullResultMap">
+		SELECT
+            ID
+            , SUPPLIER_ID
+            , SPU_ID
+            , SKU_ID
+            , PRODUCT_NAME
+            , SUPPLIER_PRICE
+            , BARCODE
+            , PRODUCT_CODE
+            , COLOR
+            , PRODUCT_DESCRIBE
+            , SALE_CURRENCY
+            , PRODUCT_SIZE
+            , STOCK
+            , CREATE_TIME
+            , LAST_TIME
+		FROM SKU
+		WHERE
+		(ID = #{iD})
+	</select>
+	
+	<insert id="insert" parameterType="SKU">
+		INSERT INTO SKU (
+			 SUPPLIER_ID
+			, SPU_ID
+			, SKU_ID
+			, PRODUCT_NAME
+			, SUPPLIER_PRICE
+			, BARCODE
+			, PRODUCT_CODE
+			, COLOR
+			, PRODUCT_DESCRIBE
+			, SALE_CURRENCY
+			, PRODUCT_SIZE
+			, STOCK
+			, CREATE_TIME
+			, LAST_TIME
+		) VALUES (
+			 #{sUPPLIERID}
+			, #{sPUID}
+			, #{iD}
+			, #{pRODUCTNAME}
+			, #{sUPPLIERPRICE}
+			, #{bARCODE}
+			, #{pRODUCTCODE}
+			, #{cOLOR}
+			, #{pRODUCTDESCRIBE}
+			, #{sALECURRENCY}
+			, #{pRODUCTSIZE}
+			, #{sTOCK}
+			, #{cREATETIME}
+			, #{lASTTIME}
+		)
+		<selectKey resultType="String" keyProperty="iD" order="AFTER">
+            <!--mysql-->
+			select LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+    
+	<insert id="insertMap" parameterType="java.util.Map">
+		INSERT INTO SKU 
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="sUPPLIERID != null">
+			        SUPPLIER_ID,
+                </if>
+                <if test="sPUID != null">
+			        SPU_ID,
+                </if>
+                <if test="iD != null">
+			        SKU_ID,
+                </if>
+                <if test="pRODUCTNAME != null">
+			        PRODUCT_NAME,
+                </if>
+                <if test="sUPPLIERPRICE != null">
+			        SUPPLIER_PRICE,
+                </if>
+                <if test="bARCODE != null">
+			        BARCODE,
+                </if>
+                <if test="pRODUCTCODE != null">
+			        PRODUCT_CODE,
+                </if>
+                <if test="cOLOR != null">
+			        COLOR,
+                </if>
+                <if test="pRODUCTDESCRIBE != null">
+			        PRODUCT_DESCRIBE,
+                </if>
+                <if test="sALECURRENCY != null">
+			        SALE_CURRENCY,
+                </if>
+                <if test="pRODUCTSIZE != null">
+			        PRODUCT_SIZE,
+                </if>
+                <if test="sTOCK != null">
+			        STOCK,
+                </if>
+                <if test="cREATETIME != null">
+			        CREATE_TIME,
+                </if>
+                <if test="lASTTIME != null">
+			        LAST_TIME,
+                </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="sUPPLIERID != null">
+			        #{sUPPLIERID}
+                </if>
+                <if test="sPUID != null">
+			        #{sPUID}
+                </if>
+                <if test="iD != null">
+			        #{iD}
+                </if>
+                <if test="pRODUCTNAME != null">
+			        #{pRODUCTNAME}
+                </if>
+                <if test="sUPPLIERPRICE != null">
+			        #{sUPPLIERPRICE}
+                </if>
+                <if test="bARCODE != null">
+			        #{bARCODE}
+                </if>
+                <if test="pRODUCTCODE != null">
+			        #{pRODUCTCODE}
+                </if>
+                <if test="cOLOR != null">
+			        #{cOLOR}
+                </if>
+                <if test="pRODUCTDESCRIBE != null">
+			        #{pRODUCTDESCRIBE}
+                </if>
+                <if test="sALECURRENCY != null">
+			        #{sALECURRENCY}
+                </if>
+                <if test="pRODUCTSIZE != null">
+			        #{pRODUCTSIZE}
+                </if>
+                <if test="sTOCK != null">
+			        #{sTOCK}
+                </if>
+                <if test="cREATETIME != null">
+			        #{cREATETIME}
+                </if>
+                <if test="lASTTIME != null">
+			        #{lASTTIME}
+                </if>
+        </trim>
+		)
+		<selectKey resultType="String" keyProperty="iD" order="AFTER">
+            <!--mysql-->
+			select LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+    
+	<insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO SKU (
+			 SUPPLIER_ID
+			, SPU_ID
+			, SKU_ID
+			, PRODUCT_NAME
+			, SUPPLIER_PRICE
+			, BARCODE
+			, PRODUCT_CODE
+			, COLOR
+			, PRODUCT_DESCRIBE
+			, SALE_CURRENCY
+			, PRODUCT_SIZE
+			, STOCK
+			, CREATE_TIME
+			, LAST_TIME
+		) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        <![CDATA[(
+			 #{item.sUPPLIERID}
+			, #{item.sPUID}
+			, #{item.iD}
+			, #{item.pRODUCTNAME}
+			, #{item.sUPPLIERPRICE}
+			, #{item.bARCODE}
+			, #{item.pRODUCTCODE}
+			, #{item.cOLOR}
+			, #{item.pRODUCTDESCRIBE}
+			, #{item.sALECURRENCY}
+			, #{item.pRODUCTSIZE}
+			, #{item.sTOCK}
+			, #{item.cREATETIME}
+			, #{item.lASTTIME}
+             )]]>
+        </foreach>
+    </insert>
+
+	<update id="update" parameterType="SKU">
+		UPDATE SKU SET
+			 SUPPLIER_ID = #sUPPLIERID#
+			, SPU_ID = #sPUID#
+			, SKU_ID = #iD#
+			, PRODUCT_NAME = #pRODUCTNAME#
+			, SUPPLIER_PRICE = #sUPPLIERPRICE#
+			, BARCODE = #bARCODE#
+			, PRODUCT_CODE = #pRODUCTCODE#
+			, COLOR = #cOLOR#
+			, PRODUCT_DESCRIBE = #pRODUCTDESCRIBE#
+			, SALE_CURRENCY = #sALECURRENCY#
+			, PRODUCT_SIZE = #pRODUCTSIZE#
+			, STOCK = #sTOCK#
+			, CREATE_TIME = #cREATETIME#
+			, LAST_TIME = #lASTTIME#
+		WHERE
+			(ID = #{iD})
+	</update>
+    
+    <update id="updateByMap" parameterType="java.util.Map">
+		UPDATE SKU 
+        SET
+        <trim suffixOverrides=",">
+            <if test="sUPPLIERID != null">
+		        SUPPLIER_ID = #{sUPPLIERID}
+		    </if>
+            <if test="sPUID != null">
+		        SPU_ID = #{sPUID}
+		    </if>
+            <if test="iD != null">
+		        SKU_ID = #{iD}
+		    </if>
+            <if test="pRODUCTNAME != null">
+		        PRODUCT_NAME = #{pRODUCTNAME}
+		    </if>
+            <if test="sUPPLIERPRICE != null">
+		        SUPPLIER_PRICE = #{sUPPLIERPRICE}
+		    </if>
+            <if test="bARCODE != null">
+		        BARCODE = #{bARCODE}
+		    </if>
+            <if test="pRODUCTCODE != null">
+		        PRODUCT_CODE = #{pRODUCTCODE}
+		    </if>
+            <if test="cOLOR != null">
+		        COLOR = #{cOLOR}
+		    </if>
+            <if test="pRODUCTDESCRIBE != null">
+		        PRODUCT_DESCRIBE = #{pRODUCTDESCRIBE}
+		    </if>
+            <if test="sALECURRENCY != null">
+		        SALE_CURRENCY = #{sALECURRENCY}
+		    </if>
+            <if test="pRODUCTSIZE != null">
+		        PRODUCT_SIZE = #{pRODUCTSIZE}
+		    </if>
+            <if test="sTOCK != null">
+		        STOCK = #{sTOCK}
+		    </if>
+            <if test="cREATETIME != null">
+		        CREATE_TIME = #{cREATETIME}
+		    </if>
+            <if test="lASTTIME != null">
+		        LAST_TIME = #{lASTTIME}
+		    </if>
+        </trim>
+		WHERE
+			(ID = #{iD})
+	</update>
+
+    <update id="updateDynamic" parameterType="SKU">
+		UPDATE SKU 
+        SET
+        <trim suffixOverrides=",">
+            <if test="sUPPLIERID != null">SUPPLIER_ID = #{sUPPLIERID}</if>
+            <if test="sPUID != null">SPU_ID = #{sPUID}</if>
+            <if test="iD != null">SKU_ID = #{iD}</if>
+            <if test="pRODUCTNAME != null">PRODUCT_NAME = #{pRODUCTNAME}</if>
+            <if test="sUPPLIERPRICE != null">SUPPLIER_PRICE = #{sUPPLIERPRICE}</if>
+            <if test="bARCODE != null">BARCODE = #{bARCODE}</if>
+            <if test="pRODUCTCODE != null">PRODUCT_CODE = #{pRODUCTCODE}</if>
+            <if test="cOLOR != null">COLOR = #{cOLOR}</if>
+            <if test="pRODUCTDESCRIBE != null">PRODUCT_DESCRIBE = #{pRODUCTDESCRIBE}</if>
+            <if test="sALECURRENCY != null">SALE_CURRENCY = #{sALECURRENCY}</if>
+            <if test="pRODUCTSIZE != null">PRODUCT_SIZE = #{pRODUCTSIZE}</if>
+            <if test="sTOCK != null">STOCK = #{sTOCK}</if>
+            <if test="cREATETIME != null">CREATE_TIME = #{cREATETIME}</if>
+            <if test="lASTTIME != null">LAST_TIME = #{lASTTIME}</if>
+        </trim>
+		WHERE
+			(ID = #{iD})
+	</update>
+
+	<delete id="delete" parameterType="SKU">
+		DELETE FROM SKU
+		WHERE
+			(ID = #{iD})
+	</delete>
+
+
+
+</sqlMap>

@@ -1,0 +1,329 @@
+﻿<%-- 
+Name:	IBatisGen.BatisMap.cst
+Version: 2007.02.08
+Author: jinwl  ( jinweile@163.com )
+Description: Generates SQL mapping xml for IBatis (see ibatis.apache.org)
+--%>
+<%@ CodeTemplate Language="C#" TargetLanguage="C#" Src="CSBatisBuilder.cs" Inherits="TableTemplate" Debug="true"  Description="Generates IBatis map from a database table." %>
+
+<%@ Assembly Name="System" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Assembly Name="CodeSmith.BaseTemplates" %>
+<%@ Assembly Name="CodeSmith.CustomProperties" %>
+<%@ Assembly Name="SchemaExplorer" %>
+<%--<%@ Assembly Src="CSBatisBuilder.cs" %>--%>
+
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.ComponentModel" %>
+<%@ Import Namespace="System.Collections.Specialized" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Import Namespace="System.Text" %>
+<%@ Import Namespace="CSBatisBuilder" %>
+<script runat="template">
+	protected override FileOption GetDefaultFileOption() {
+		return FileSetOption.CreateDefaultBatisMapOption();
+	}
+</script>
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+	
+<mapper namespace="<% =Builder.DaoIntfNamespace %>.<% =Builder.DaoIntfName %>">
+
+	<resultMap id="<% =Builder.FullResultMapId %>" class="<% =Builder.EntityName%>">
+		<% foreach (ColumnInfo c in Builder.Columns) { %>
+		<result property="<% =c.VarName %>" column="<% =c.ResultColumnName %>"/>
+		<% } %>
+	</resultMap>
+	<% if (Builder.HasLob) { %>
+	<resultMap id="<% =Builder.NonLobResultMapId %>" class="<% =Builder.EntityName%>">
+		<% foreach (ColumnInfo c in Builder.NonLobColumns) { %>
+		<result property="<% =c.VarName %>" column="<% =c.ResultColumnName %>"/>
+		<% } %>
+	</resultMap>
+	<% } %>
+
+	<select id="<% =Builder.GetCountMethod %>" parameterType="java.util.Map" resultType="Integer">
+		SELECT count(1) FROM <% =Builder.TableName %>
+        <trim prefix="WHERE" prefixOverrides="AND|OR ">
+            <% for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+            ColumnInfo c = Builder.NonPkColumns[i]; %>
+            <if test="<% =c.VarName %>!=null">
+    		  and <% =c.ResultColumnName %> = #{<% =c.VarName %>}
+            </if>
+            <% } %>
+        </trim>
+	</select>
+	
+	<select id="<% =Builder.FindAllMethod %>" resultMap="<% =Builder.FullResultMapId %>">
+		SELECT
+        <% for (int i = 0; i < Builder.Columns.Count; i ++) {
+            ColumnInfo c = Builder.Columns[i];%>
+            <% 	if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
+        <% } %>
+		FROM <% =Builder.TableName %>
+	</select>
+	
+	<select id="<% =Builder.FindMethod %>" parameterType="<% =Builder.PkColumns[0].ClrTypeDecl%>" resultMap="<% =Builder.FullResultMapId %>">
+		SELECT
+        <% for (int i = 0; i < Builder.Columns.Count; i ++) {
+            ColumnInfo c = Builder.Columns[i];%>
+            <% 	if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
+        <% } %>
+		FROM <% =Builder.TableName %>
+		WHERE
+		<% 	for (int i = 0; i < Builder.PkColumns.Count; i++) { 
+		    ColumnInfo c = Builder.PkColumns[i]; %>
+		<% if (i > 0) { %>AND <% } %>(<% =c.ResultColumnName %> = #{<% =c.VarName %>})
+		<% } %>
+	</select>
+	
+	<insert id="<% =Builder.InsertMethod %>" parameterType="<% =Builder.EntityName %>">
+        <%--<!--oracle-->
+        <!--<selectKey keyProperty="innerUserID" resultType="Long" order="BEFORE">
+          select SQ_ADMIN_SEQ.nextval from dual
+        </selectKey>-->--%>
+		INSERT INTO <% =Builder.TableName %> (
+			<%
+			    	for (int i = 0; i < Builder.NonPkColumns.Count; i++) { 
+					ColumnInfo c = Builder.NonPkColumns[i]; %>
+			<% 		if (i > 0) { %>,<% } %> <% =c.ResultColumnName %>
+			<% 	} %>
+		) VALUES (
+			<% 	for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+					ColumnInfo c = Builder.NonPkColumns[i];		%>
+			<% 		if (i > 0) { %>,<% } %> #{<% =c.VarName %>}
+			<% 	} %>
+		)
+		<selectKey resultType="<% =Builder.PkColumns[0].ClrTypeDecl%>" keyProperty="<% =Builder.PkColumns[0].VarName%>" order="AFTER">
+            <%--<!--sqlite-->
+            <!--select last_insert_rowid() as value-->--%>
+            <!--mysql-->
+			select LAST_INSERT_ID() as value
+            <%--<!--sqlserver-->
+			<!--select @@identity as value-->--%>
+		</selectKey>
+	</insert>
+    
+	<insert id="<% =Builder.InsertMethod %>Map" parameterType="java.util.Map">
+        <%--<!--oracle-->
+        <!--<selectKey keyProperty="innerUserID" resultType="Long" order="BEFORE">
+          select SQ_ADMIN_SEQ.nextval from dual
+        </selectKey>-->--%>
+		INSERT INTO <% =Builder.TableName %> 
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+			<%
+			    	for (int i = 0; i < Builder.NonPkColumns.Count; i++) { 
+					ColumnInfo c = Builder.NonPkColumns[i]; %>
+                <if test="<% =c.VarName %> != null">
+			        <% =c.ResultColumnName %>,
+                </if>
+			<% 	} %>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<% 	for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+					ColumnInfo c = Builder.NonPkColumns[i];		%>
+                <if test="<% =c.VarName %> != null">
+			        #{<% =c.VarName %>}
+                </if>
+			<% 	} %>
+        </trim>
+		)
+		<selectKey resultType="<% =Builder.PkColumns[0].ClrTypeDecl%>" keyProperty="<% =Builder.PkColumns[0].VarName%>" order="AFTER">
+            <%--<!--sqlite-->
+            <!--select last_insert_rowid() as value-->--%>
+            <!--mysql-->
+			select LAST_INSERT_ID() as value
+            <%--<!--sqlserver-->
+			<!--select @@identity as value-->--%>
+		</selectKey>
+	</insert>
+    
+	<insert id="<% =Builder.InsertMethod %>Batch" parameterType="java.util.List">
+        INSERT INTO <% =Builder.TableName %> (
+			<% for (int i = 0; i < Builder.NonPkColumns.Count; i++) { 
+			    ColumnInfo c = Builder.NonPkColumns[i]; %>
+			<% if (i > 0) { %>,<% } %> <% =c.ResultColumnName %>
+			<% } %>
+		) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        <![CDATA[(
+            <% for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+			    ColumnInfo c = Builder.NonPkColumns[i];		%>
+			<% if (i > 0) { %>,<% } %> #{item.<% =c.VarName %>}
+			<% } %>
+             )]]>
+        </foreach>
+    </insert>
+
+	<update id="<% =Builder.UpdateMethod %>" parameterType="<% =Builder.EntityName %>">
+		UPDATE <% =Builder.TableName %> SET
+			<% 	for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+					ColumnInfo c = Builder.NonPkColumns[i]; 	%>
+			<% 		if (i > 0) { %>,<% } %> <% =c.ResultColumnName %> = #<% =c.VarName %>#
+			<% 	} %>
+		WHERE
+			<% 	for (int i = 0; i < Builder.PkColumns.Count; i++) {
+					ColumnInfo c = Builder.PkColumns[i];	%>
+			<% 		if (i > 0) { %>AND <% } %>(<% =c.ResultColumnName %> = #{<% =c.VarName %>})
+			<% 	} %>
+	</update>
+    
+    <update id="<% =Builder.UpdateMethod %>ByMap" parameterType="java.util.Map">
+		UPDATE <% =Builder.TableName %> 
+        SET
+        <trim suffixOverrides=",">
+            <% for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+		        ColumnInfo c = Builder.NonPkColumns[i]; %>
+            <if test="<% =c.VarName %> != null">
+		        <% =c.ResultColumnName %> = #{<% =c.VarName %>}
+		    </if>
+		    <% } %>
+        </trim>
+		WHERE
+			<% for (int i = 0; i < Builder.PkColumns.Count; i++) {
+			    ColumnInfo c = Builder.PkColumns[i];	%>
+			<% if (i > 0) { %>AND <% } %>(<% =c.ResultColumnName %> = #{<% =c.VarName %>})
+			<% } %>
+	</update>
+
+    <update id="<% =Builder.UpdateMethod %>Dynamic" parameterType="<% =Builder.EntityName %>">
+		UPDATE <% =Builder.TableName %> 
+        SET
+        <trim suffixOverrides=",">
+			<% for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+			    ColumnInfo c = Builder.NonPkColumns[i]; 	%>
+            <if test="<% =c.VarName %> != null"><% =c.ResultColumnName %> = #{<% =c.VarName %>}</if>
+			<% } %>
+        </trim>
+		WHERE
+			<% for (int i = 0; i < Builder.PkColumns.Count; i++) {
+			    ColumnInfo c = Builder.PkColumns[i];	%>
+			<% if (i > 0) { %> AND <% } %>(<% =c.ResultColumnName %> = #{<% =c.VarName %>})
+			<% } %>
+	</update>
+
+	<delete id="<% =Builder.DeleteMethod %>" parameterType="<% =Builder.EntityName %>">
+		DELETE FROM <% =Builder.TableName %>
+		WHERE
+			<%	for (int i = 0; i < Builder.PkColumns.Count; i++) {
+					ColumnInfo c = Builder.PkColumns[i];	%>
+			<%		if (i > 0) { %>AND <% } %>(<% =c.ResultColumnName %> = #{<% =c.VarName %>})
+			<%	} %>
+	</delete>
+
+    <%--<select id="<% =Builder.SelectStmtId %>"  parameterType="java.util.Map"  resultMap="<% =Builder.FullResultMapId %>">
+        <!--sqlserver-->
+        SELECT
+            <isPropertyAvailable property="Top">
+                Top $Top$
+            </isPropertyAvailable>
+            <% for (int i = 0; i < Builder.Columns.Count; i ++) {
+                ColumnInfo c = Builder.Columns[i];%>
+                <% if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
+            <% } %>
+    		FROM <% =Builder.TableName %>
+        <dynamic prepend="WHERE">
+            <isPropertyAvailable prepend="and" property="<% =Builder.PkColumnInfo.VarName %>List">
+                <% =Builder.PkColumnInfo.ResultColumnName %> in
+                <iterate property="<% =Builder.PkColumnInfo.VarName %>List" open="(" close=")" conjunction=",">
+                    <![CDATA[#<% =Builder.PkColumnInfo.VarName %>List[]#]]>
+                </iterate>
+            </isPropertyAvailable>
+    		<% for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+    		    ColumnInfo c = Builder.NonPkColumns[i]; %>
+    		    <isPropertyAvailable property="<% =c.VarName %>" prepend="and">
+    		        <% =c.ResultColumnName %> = #<% =c.VarName %>#
+    		    </isPropertyAvailable>
+    		<% } %>
+        </dynamic>
+        <isPropertyAvailable property="OrderBy">
+            ORDER BY $OrderBy$
+        </isPropertyAvailable>
+        <!--mysql-->
+        SELECT
+            <% for (int i = 0; i < Builder.Columns.Count; i ++) {
+                ColumnInfo c = Builder.Columns[i];%>
+                <% if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
+            <% } %>
+    		FROM <% =Builder.TableName %>
+        <dynamic prepend="WHERE">
+            <isPropertyAvailable prepend="and" property="<% =Builder.PkColumnInfo.VarName %>List">
+                <% =Builder.PkColumnInfo.ResultColumnName %> in
+                <iterate property="<% =Builder.PkColumnInfo.VarName %>List" open="(" close=")" conjunction=",">
+                    <![CDATA[#<% =Builder.PkColumnInfo.VarName %>List[]#]]>
+                </iterate>
+            </isPropertyAvailable>
+    		<% for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+    		    ColumnInfo c = Builder.NonPkColumns[i]; %>
+    		    <isPropertyAvailable property="<% =c.VarName %>" prepend="and">
+    		        <% =c.ResultColumnName %> = #<% =c.VarName %>#
+    		    </isPropertyAvailable>
+    		<% } %>
+        </dynamic>
+        <isPropertyAvailable property="OrderBy">
+            ORDER BY $OrderBy$
+        </isPropertyAvailable>
+        <dynamic prepend="LIMIT">
+            <isPropertyAvailable prepend="," property="Start">
+                #Start#
+            </isPropertyAvailable>
+            <isPropertyAvailable prepend="," property="PageCount">
+                #PageCount#
+            </isPropertyAvailable>
+        </dynamic>
+    </select>--%>
+
+    <%--<select id="<% =Builder.SelectPagerStmtId %>" parameterClass="java.util.Map" resultMap="<% =Builder.FullResultMapId %>">
+        <!--sqlserver-->
+        SELECT * from (select ROW_NUMBER() over(order BY $OrderBy$) RowNumber,
+            <% for (int i = 0; i < Builder.Columns.Count; i ++) {
+    		    ColumnInfo c = Builder.Columns[i];%>
+    		    <% if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
+            <% } %>
+    		FROM <% =Builder.TableName %>
+        <dynamic prepend="WHERE">
+    	    <% for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+    		    ColumnInfo c = Builder.NonPkColumns[i]; %>
+    		    <isPropertyAvailable property="<% =c.VarName %>" prepend="and">
+    		        <% =c.ResultColumnName %> = #<% =c.VarName %>#
+    		    </isPropertyAvailable>
+    		<% } %>
+        </dynamic>
+            ) A
+        <dynamic prepend="WHERE">
+            <isPropertyAvailable prepend="AND" property="Start">
+                <![CDATA[RowNumber >= #Start#]]>
+            </isPropertyAvailable>
+            <isPropertyAvailable prepend="AND" property="End">
+              <![CDATA[RowNumber <= #End#]]>
+            </isPropertyAvailable>
+        </dynamic>
+        <!--mysql-->
+        SELECT
+            <% for (int i = 0; i < Builder.Columns.Count; i ++) {
+    		    ColumnInfo c = Builder.Columns[i];%>
+    		    <% if (i > 0) { %>, <% } %><% 	=c.ResultColumnName %>
+            <% } %>
+    		FROM <% =Builder.TableName %>
+        <dynamic prepend="WHERE">
+    	    <% for (int i = 0; i < Builder.NonPkColumns.Count; i++) {
+    		    ColumnInfo c = Builder.NonPkColumns[i]; %>
+    		    <isPropertyAvailable property="<% =c.VarName %>" prepend="and">
+    		        <% =c.ResultColumnName %> = #<% =c.VarName %>#
+    		    </isPropertyAvailable>
+    		<% } %>
+        </dynamic>
+        <isPropertyAvailable property="OrderBy">
+            ORDER BY $OrderBy$
+        </isPropertyAvailable>
+        <dynamic prepend="LIMIT">
+            <isPropertyAvailable prepend="," property="Start">
+                #Start#
+            </isPropertyAvailable>
+            <isPropertyAvailable prepend="," property="PageCount">
+                #PageCount#
+            </isPropertyAvailable>
+        </dynamic>
+    </select>--%>
+
+</sqlMap>

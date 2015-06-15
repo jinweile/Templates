@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+	
+<mapper namespace="com.shangpin.iog.dao.IPRODUCTSPINAKERDao">
+
+	<resultMap id="PRODUCTSPINAKER-FullResultMap" class="PRODUCTSPINAKER">
+		<result property="productId" column="product_id"/>
+		<result property="producerId" column="producer_id"/>
+		<result property="type" column="type"/>
+		<result property="season" column="season"/>
+		<result property="id" column="id"/>
+		<result property="productName" column="product_name"/>
+		<result property="description" column="description"/>
+		<result property="category" column="category"/>
+		<result property="url" column="url"/>
+		<result property="supplyPrice" column="supply_price"/>
+		<result property="itemId" column="item_id"/>
+		<result property="itemSize" column="item_size"/>
+		<result property="barcode" column="barcode"/>
+		<result property="color" column="color"/>
+		<result property="stock" column="stock"/>
+		<result property="createDate" column="create_date"/>
+		<result property="lastDate" column="last_date"/>
+	</resultMap>
+
+	<select id="getCount" parameterType="java.util.Map" resultType="Integer">
+		SELECT count(1) FROM PRODUCT_SPINAKER
+        <trim prefix="WHERE" prefixOverrides="AND|OR ">
+            <if test="productId!=null">
+    		  and product_id = #{productId}
+            </if>
+            <if test="producerId!=null">
+    		  and producer_id = #{producerId}
+            </if>
+            <if test="type!=null">
+    		  and type = #{type}
+            </if>
+            <if test="season!=null">
+    		  and season = #{season}
+            </if>
+            <if test="productName!=null">
+    		  and product_name = #{productName}
+            </if>
+            <if test="description!=null">
+    		  and description = #{description}
+            </if>
+            <if test="category!=null">
+    		  and category = #{category}
+            </if>
+            <if test="url!=null">
+    		  and url = #{url}
+            </if>
+            <if test="supplyPrice!=null">
+    		  and supply_price = #{supplyPrice}
+            </if>
+            <if test="itemId!=null">
+    		  and item_id = #{itemId}
+            </if>
+            <if test="itemSize!=null">
+    		  and item_size = #{itemSize}
+            </if>
+            <if test="barcode!=null">
+    		  and barcode = #{barcode}
+            </if>
+            <if test="color!=null">
+    		  and color = #{color}
+            </if>
+            <if test="stock!=null">
+    		  and stock = #{stock}
+            </if>
+            <if test="createDate!=null">
+    		  and create_date = #{createDate}
+            </if>
+            <if test="lastDate!=null">
+    		  and last_date = #{lastDate}
+            </if>
+        </trim>
+	</select>
+	
+	<select id="findAll" resultMap="PRODUCTSPINAKER-FullResultMap">
+		SELECT
+            product_id
+            , producer_id
+            , type
+            , season
+            , id
+            , product_name
+            , description
+            , category
+            , url
+            , supply_price
+            , item_id
+            , item_size
+            , barcode
+            , color
+            , stock
+            , create_date
+            , last_date
+		FROM PRODUCT_SPINAKER
+	</select>
+	
+	<select id="find" parameterType="Integer" resultMap="PRODUCTSPINAKER-FullResultMap">
+		SELECT
+            product_id
+            , producer_id
+            , type
+            , season
+            , id
+            , product_name
+            , description
+            , category
+            , url
+            , supply_price
+            , item_id
+            , item_size
+            , barcode
+            , color
+            , stock
+            , create_date
+            , last_date
+		FROM PRODUCT_SPINAKER
+		WHERE
+		(id = #{id})
+	</select>
+	
+	<insert id="insert" parameterType="PRODUCTSPINAKER">
+		INSERT INTO PRODUCT_SPINAKER (
+			 product_id
+			, producer_id
+			, type
+			, season
+			, product_name
+			, description
+			, category
+			, url
+			, supply_price
+			, item_id
+			, item_size
+			, barcode
+			, color
+			, stock
+			, create_date
+			, last_date
+		) VALUES (
+			 #{productId}
+			, #{producerId}
+			, #{type}
+			, #{season}
+			, #{productName}
+			, #{description}
+			, #{category}
+			, #{url}
+			, #{supplyPrice}
+			, #{itemId}
+			, #{itemSize}
+			, #{barcode}
+			, #{color}
+			, #{stock}
+			, #{createDate}
+			, #{lastDate}
+		)
+		<selectKey resultType="Integer" keyProperty="id" order="AFTER">
+            <!--mysql-->
+			select LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+    
+	<insert id="insertMap" parameterType="java.util.Map">
+		INSERT INTO PRODUCT_SPINAKER 
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="productId != null">
+			        product_id,
+                </if>
+                <if test="producerId != null">
+			        producer_id,
+                </if>
+                <if test="type != null">
+			        type,
+                </if>
+                <if test="season != null">
+			        season,
+                </if>
+                <if test="productName != null">
+			        product_name,
+                </if>
+                <if test="description != null">
+			        description,
+                </if>
+                <if test="category != null">
+			        category,
+                </if>
+                <if test="url != null">
+			        url,
+                </if>
+                <if test="supplyPrice != null">
+			        supply_price,
+                </if>
+                <if test="itemId != null">
+			        item_id,
+                </if>
+                <if test="itemSize != null">
+			        item_size,
+                </if>
+                <if test="barcode != null">
+			        barcode,
+                </if>
+                <if test="color != null">
+			        color,
+                </if>
+                <if test="stock != null">
+			        stock,
+                </if>
+                <if test="createDate != null">
+			        create_date,
+                </if>
+                <if test="lastDate != null">
+			        last_date,
+                </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="productId != null">
+			        #{productId}
+                </if>
+                <if test="producerId != null">
+			        #{producerId}
+                </if>
+                <if test="type != null">
+			        #{type}
+                </if>
+                <if test="season != null">
+			        #{season}
+                </if>
+                <if test="productName != null">
+			        #{productName}
+                </if>
+                <if test="description != null">
+			        #{description}
+                </if>
+                <if test="category != null">
+			        #{category}
+                </if>
+                <if test="url != null">
+			        #{url}
+                </if>
+                <if test="supplyPrice != null">
+			        #{supplyPrice}
+                </if>
+                <if test="itemId != null">
+			        #{itemId}
+                </if>
+                <if test="itemSize != null">
+			        #{itemSize}
+                </if>
+                <if test="barcode != null">
+			        #{barcode}
+                </if>
+                <if test="color != null">
+			        #{color}
+                </if>
+                <if test="stock != null">
+			        #{stock}
+                </if>
+                <if test="createDate != null">
+			        #{createDate}
+                </if>
+                <if test="lastDate != null">
+			        #{lastDate}
+                </if>
+        </trim>
+		)
+		<selectKey resultType="Integer" keyProperty="id" order="AFTER">
+            <!--mysql-->
+			select LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+    
+	<insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO PRODUCT_SPINAKER (
+			 product_id
+			, producer_id
+			, type
+			, season
+			, product_name
+			, description
+			, category
+			, url
+			, supply_price
+			, item_id
+			, item_size
+			, barcode
+			, color
+			, stock
+			, create_date
+			, last_date
+		) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        <![CDATA[(
+			 #{item.productId}
+			, #{item.producerId}
+			, #{item.type}
+			, #{item.season}
+			, #{item.productName}
+			, #{item.description}
+			, #{item.category}
+			, #{item.url}
+			, #{item.supplyPrice}
+			, #{item.itemId}
+			, #{item.itemSize}
+			, #{item.barcode}
+			, #{item.color}
+			, #{item.stock}
+			, #{item.createDate}
+			, #{item.lastDate}
+             )]]>
+        </foreach>
+    </insert>
+
+	<update id="update" parameterType="PRODUCTSPINAKER">
+		UPDATE PRODUCT_SPINAKER SET
+			 product_id = #productId#
+			, producer_id = #producerId#
+			, type = #type#
+			, season = #season#
+			, product_name = #productName#
+			, description = #description#
+			, category = #category#
+			, url = #url#
+			, supply_price = #supplyPrice#
+			, item_id = #itemId#
+			, item_size = #itemSize#
+			, barcode = #barcode#
+			, color = #color#
+			, stock = #stock#
+			, create_date = #createDate#
+			, last_date = #lastDate#
+		WHERE
+			(id = #{id})
+	</update>
+    
+    <update id="updateByMap" parameterType="java.util.Map">
+		UPDATE PRODUCT_SPINAKER 
+        SET
+        <trim suffixOverrides=",">
+            <if test="productId != null">
+		        product_id = #{productId}
+		    </if>
+            <if test="producerId != null">
+		        producer_id = #{producerId}
+		    </if>
+            <if test="type != null">
+		        type = #{type}
+		    </if>
+            <if test="season != null">
+		        season = #{season}
+		    </if>
+            <if test="productName != null">
+		        product_name = #{productName}
+		    </if>
+            <if test="description != null">
+		        description = #{description}
+		    </if>
+            <if test="category != null">
+		        category = #{category}
+		    </if>
+            <if test="url != null">
+		        url = #{url}
+		    </if>
+            <if test="supplyPrice != null">
+		        supply_price = #{supplyPrice}
+		    </if>
+            <if test="itemId != null">
+		        item_id = #{itemId}
+		    </if>
+            <if test="itemSize != null">
+		        item_size = #{itemSize}
+		    </if>
+            <if test="barcode != null">
+		        barcode = #{barcode}
+		    </if>
+            <if test="color != null">
+		        color = #{color}
+		    </if>
+            <if test="stock != null">
+		        stock = #{stock}
+		    </if>
+            <if test="createDate != null">
+		        create_date = #{createDate}
+		    </if>
+            <if test="lastDate != null">
+		        last_date = #{lastDate}
+		    </if>
+        </trim>
+		WHERE
+			(id = #{id})
+	</update>
+
+    <update id="updateDynamic" parameterType="PRODUCTSPINAKER">
+		UPDATE PRODUCT_SPINAKER 
+        SET
+        <trim suffixOverrides=",">
+            <if test="productId != null">product_id = #{productId}</if>
+            <if test="producerId != null">producer_id = #{producerId}</if>
+            <if test="type != null">type = #{type}</if>
+            <if test="season != null">season = #{season}</if>
+            <if test="productName != null">product_name = #{productName}</if>
+            <if test="description != null">description = #{description}</if>
+            <if test="category != null">category = #{category}</if>
+            <if test="url != null">url = #{url}</if>
+            <if test="supplyPrice != null">supply_price = #{supplyPrice}</if>
+            <if test="itemId != null">item_id = #{itemId}</if>
+            <if test="itemSize != null">item_size = #{itemSize}</if>
+            <if test="barcode != null">barcode = #{barcode}</if>
+            <if test="color != null">color = #{color}</if>
+            <if test="stock != null">stock = #{stock}</if>
+            <if test="createDate != null">create_date = #{createDate}</if>
+            <if test="lastDate != null">last_date = #{lastDate}</if>
+        </trim>
+		WHERE
+			(id = #{id})
+	</update>
+
+	<delete id="delete" parameterType="PRODUCTSPINAKER">
+		DELETE FROM PRODUCT_SPINAKER
+		WHERE
+			(id = #{id})
+	</delete>
+
+
+
+</sqlMap>

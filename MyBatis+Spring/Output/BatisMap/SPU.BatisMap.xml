@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+	
+<mapper namespace="com.shangpin.iog.dao.ISPUDao">
+
+	<resultMap id="SPU-FullResultMap" class="SPU">
+		<result property="iD" column="ID"/>
+		<result property="sUPPLIERID" column="SUPPLIER_ID"/>
+		<result property="iD" column="SPU_ID"/>
+		<result property="nAME" column="SPU_NAME"/>
+		<result property="cATEGORYID" column="CATEGORY_ID"/>
+		<result property="cATEGORYNAME" column="CATEGORY_NAME"/>
+		<result property="bRANDID" column="BRAND_ID"/>
+		<result property="bRANDNAME" column="BRAND_NAME"/>
+		<result property="sEASONID" column="SEASON_ID"/>
+		<result property="sEASONNAME" column="SEASON_NAME"/>
+		<result property="pICURL" column="PIC_URL"/>
+		<result property="mATERIAL" column="MATERIAL"/>
+		<result property="pRODUCTORIGIN" column="PRODUCT_ORIGIN"/>
+		<result property="cREATETIME" column="CREATE_TIME"/>
+		<result property="lASTTIME" column="LAST_TIME"/>
+	</resultMap>
+
+	<select id="getCount" parameterType="java.util.Map" resultType="Integer">
+		SELECT count(1) FROM SPU
+        <trim prefix="WHERE" prefixOverrides="AND|OR ">
+            <if test="sUPPLIERID!=null">
+    		  and SUPPLIER_ID = #{sUPPLIERID}
+            </if>
+            <if test="iD!=null">
+    		  and SPU_ID = #{iD}
+            </if>
+            <if test="nAME!=null">
+    		  and SPU_NAME = #{nAME}
+            </if>
+            <if test="cATEGORYID!=null">
+    		  and CATEGORY_ID = #{cATEGORYID}
+            </if>
+            <if test="cATEGORYNAME!=null">
+    		  and CATEGORY_NAME = #{cATEGORYNAME}
+            </if>
+            <if test="bRANDID!=null">
+    		  and BRAND_ID = #{bRANDID}
+            </if>
+            <if test="bRANDNAME!=null">
+    		  and BRAND_NAME = #{bRANDNAME}
+            </if>
+            <if test="sEASONID!=null">
+    		  and SEASON_ID = #{sEASONID}
+            </if>
+            <if test="sEASONNAME!=null">
+    		  and SEASON_NAME = #{sEASONNAME}
+            </if>
+            <if test="pICURL!=null">
+    		  and PIC_URL = #{pICURL}
+            </if>
+            <if test="mATERIAL!=null">
+    		  and MATERIAL = #{mATERIAL}
+            </if>
+            <if test="pRODUCTORIGIN!=null">
+    		  and PRODUCT_ORIGIN = #{pRODUCTORIGIN}
+            </if>
+            <if test="cREATETIME!=null">
+    		  and CREATE_TIME = #{cREATETIME}
+            </if>
+            <if test="lASTTIME!=null">
+    		  and LAST_TIME = #{lASTTIME}
+            </if>
+        </trim>
+	</select>
+	
+	<select id="findAll" resultMap="SPU-FullResultMap">
+		SELECT
+            ID
+            , SUPPLIER_ID
+            , SPU_ID
+            , SPU_NAME
+            , CATEGORY_ID
+            , CATEGORY_NAME
+            , BRAND_ID
+            , BRAND_NAME
+            , SEASON_ID
+            , SEASON_NAME
+            , PIC_URL
+            , MATERIAL
+            , PRODUCT_ORIGIN
+            , CREATE_TIME
+            , LAST_TIME
+		FROM SPU
+	</select>
+	
+	<select id="find" parameterType="String" resultMap="SPU-FullResultMap">
+		SELECT
+            ID
+            , SUPPLIER_ID
+            , SPU_ID
+            , SPU_NAME
+            , CATEGORY_ID
+            , CATEGORY_NAME
+            , BRAND_ID
+            , BRAND_NAME
+            , SEASON_ID
+            , SEASON_NAME
+            , PIC_URL
+            , MATERIAL
+            , PRODUCT_ORIGIN
+            , CREATE_TIME
+            , LAST_TIME
+		FROM SPU
+		WHERE
+		(ID = #{iD})
+	</select>
+	
+	<insert id="insert" parameterType="SPU">
+		INSERT INTO SPU (
+			 SUPPLIER_ID
+			, SPU_ID
+			, SPU_NAME
+			, CATEGORY_ID
+			, CATEGORY_NAME
+			, BRAND_ID
+			, BRAND_NAME
+			, SEASON_ID
+			, SEASON_NAME
+			, PIC_URL
+			, MATERIAL
+			, PRODUCT_ORIGIN
+			, CREATE_TIME
+			, LAST_TIME
+		) VALUES (
+			 #{sUPPLIERID}
+			, #{iD}
+			, #{nAME}
+			, #{cATEGORYID}
+			, #{cATEGORYNAME}
+			, #{bRANDID}
+			, #{bRANDNAME}
+			, #{sEASONID}
+			, #{sEASONNAME}
+			, #{pICURL}
+			, #{mATERIAL}
+			, #{pRODUCTORIGIN}
+			, #{cREATETIME}
+			, #{lASTTIME}
+		)
+		<selectKey resultType="String" keyProperty="iD" order="AFTER">
+            <!--mysql-->
+			select LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+    
+	<insert id="insertMap" parameterType="java.util.Map">
+		INSERT INTO SPU 
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="sUPPLIERID != null">
+			        SUPPLIER_ID,
+                </if>
+                <if test="iD != null">
+			        SPU_ID,
+                </if>
+                <if test="nAME != null">
+			        SPU_NAME,
+                </if>
+                <if test="cATEGORYID != null">
+			        CATEGORY_ID,
+                </if>
+                <if test="cATEGORYNAME != null">
+			        CATEGORY_NAME,
+                </if>
+                <if test="bRANDID != null">
+			        BRAND_ID,
+                </if>
+                <if test="bRANDNAME != null">
+			        BRAND_NAME,
+                </if>
+                <if test="sEASONID != null">
+			        SEASON_ID,
+                </if>
+                <if test="sEASONNAME != null">
+			        SEASON_NAME,
+                </if>
+                <if test="pICURL != null">
+			        PIC_URL,
+                </if>
+                <if test="mATERIAL != null">
+			        MATERIAL,
+                </if>
+                <if test="pRODUCTORIGIN != null">
+			        PRODUCT_ORIGIN,
+                </if>
+                <if test="cREATETIME != null">
+			        CREATE_TIME,
+                </if>
+                <if test="lASTTIME != null">
+			        LAST_TIME,
+                </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="sUPPLIERID != null">
+			        #{sUPPLIERID}
+                </if>
+                <if test="iD != null">
+			        #{iD}
+                </if>
+                <if test="nAME != null">
+			        #{nAME}
+                </if>
+                <if test="cATEGORYID != null">
+			        #{cATEGORYID}
+                </if>
+                <if test="cATEGORYNAME != null">
+			        #{cATEGORYNAME}
+                </if>
+                <if test="bRANDID != null">
+			        #{bRANDID}
+                </if>
+                <if test="bRANDNAME != null">
+			        #{bRANDNAME}
+                </if>
+                <if test="sEASONID != null">
+			        #{sEASONID}
+                </if>
+                <if test="sEASONNAME != null">
+			        #{sEASONNAME}
+                </if>
+                <if test="pICURL != null">
+			        #{pICURL}
+                </if>
+                <if test="mATERIAL != null">
+			        #{mATERIAL}
+                </if>
+                <if test="pRODUCTORIGIN != null">
+			        #{pRODUCTORIGIN}
+                </if>
+                <if test="cREATETIME != null">
+			        #{cREATETIME}
+                </if>
+                <if test="lASTTIME != null">
+			        #{lASTTIME}
+                </if>
+        </trim>
+		)
+		<selectKey resultType="String" keyProperty="iD" order="AFTER">
+            <!--mysql-->
+			select LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+    
+	<insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO SPU (
+			 SUPPLIER_ID
+			, SPU_ID
+			, SPU_NAME
+			, CATEGORY_ID
+			, CATEGORY_NAME
+			, BRAND_ID
+			, BRAND_NAME
+			, SEASON_ID
+			, SEASON_NAME
+			, PIC_URL
+			, MATERIAL
+			, PRODUCT_ORIGIN
+			, CREATE_TIME
+			, LAST_TIME
+		) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        <![CDATA[(
+			 #{item.sUPPLIERID}
+			, #{item.iD}
+			, #{item.nAME}
+			, #{item.cATEGORYID}
+			, #{item.cATEGORYNAME}
+			, #{item.bRANDID}
+			, #{item.bRANDNAME}
+			, #{item.sEASONID}
+			, #{item.sEASONNAME}
+			, #{item.pICURL}
+			, #{item.mATERIAL}
+			, #{item.pRODUCTORIGIN}
+			, #{item.cREATETIME}
+			, #{item.lASTTIME}
+             )]]>
+        </foreach>
+    </insert>
+
+	<update id="update" parameterType="SPU">
+		UPDATE SPU SET
+			 SUPPLIER_ID = #sUPPLIERID#
+			, SPU_ID = #iD#
+			, SPU_NAME = #nAME#
+			, CATEGORY_ID = #cATEGORYID#
+			, CATEGORY_NAME = #cATEGORYNAME#
+			, BRAND_ID = #bRANDID#
+			, BRAND_NAME = #bRANDNAME#
+			, SEASON_ID = #sEASONID#
+			, SEASON_NAME = #sEASONNAME#
+			, PIC_URL = #pICURL#
+			, MATERIAL = #mATERIAL#
+			, PRODUCT_ORIGIN = #pRODUCTORIGIN#
+			, CREATE_TIME = #cREATETIME#
+			, LAST_TIME = #lASTTIME#
+		WHERE
+			(ID = #{iD})
+	</update>
+    
+    <update id="updateByMap" parameterType="java.util.Map">
+		UPDATE SPU 
+        SET
+        <trim suffixOverrides=",">
+            <if test="sUPPLIERID != null">
+		        SUPPLIER_ID = #{sUPPLIERID}
+		    </if>
+            <if test="iD != null">
+		        SPU_ID = #{iD}
+		    </if>
+            <if test="nAME != null">
+		        SPU_NAME = #{nAME}
+		    </if>
+            <if test="cATEGORYID != null">
+		        CATEGORY_ID = #{cATEGORYID}
+		    </if>
+            <if test="cATEGORYNAME != null">
+		        CATEGORY_NAME = #{cATEGORYNAME}
+		    </if>
+            <if test="bRANDID != null">
+		        BRAND_ID = #{bRANDID}
+		    </if>
+            <if test="bRANDNAME != null">
+		        BRAND_NAME = #{bRANDNAME}
+		    </if>
+            <if test="sEASONID != null">
+		        SEASON_ID = #{sEASONID}
+		    </if>
+            <if test="sEASONNAME != null">
+		        SEASON_NAME = #{sEASONNAME}
+		    </if>
+            <if test="pICURL != null">
+		        PIC_URL = #{pICURL}
+		    </if>
+            <if test="mATERIAL != null">
+		        MATERIAL = #{mATERIAL}
+		    </if>
+            <if test="pRODUCTORIGIN != null">
+		        PRODUCT_ORIGIN = #{pRODUCTORIGIN}
+		    </if>
+            <if test="cREATETIME != null">
+		        CREATE_TIME = #{cREATETIME}
+		    </if>
+            <if test="lASTTIME != null">
+		        LAST_TIME = #{lASTTIME}
+		    </if>
+        </trim>
+		WHERE
+			(ID = #{iD})
+	</update>
+
+    <update id="updateDynamic" parameterType="SPU">
+		UPDATE SPU 
+        SET
+        <trim suffixOverrides=",">
+            <if test="sUPPLIERID != null">SUPPLIER_ID = #{sUPPLIERID}</if>
+            <if test="iD != null">SPU_ID = #{iD}</if>
+            <if test="nAME != null">SPU_NAME = #{nAME}</if>
+            <if test="cATEGORYID != null">CATEGORY_ID = #{cATEGORYID}</if>
+            <if test="cATEGORYNAME != null">CATEGORY_NAME = #{cATEGORYNAME}</if>
+            <if test="bRANDID != null">BRAND_ID = #{bRANDID}</if>
+            <if test="bRANDNAME != null">BRAND_NAME = #{bRANDNAME}</if>
+            <if test="sEASONID != null">SEASON_ID = #{sEASONID}</if>
+            <if test="sEASONNAME != null">SEASON_NAME = #{sEASONNAME}</if>
+            <if test="pICURL != null">PIC_URL = #{pICURL}</if>
+            <if test="mATERIAL != null">MATERIAL = #{mATERIAL}</if>
+            <if test="pRODUCTORIGIN != null">PRODUCT_ORIGIN = #{pRODUCTORIGIN}</if>
+            <if test="cREATETIME != null">CREATE_TIME = #{cREATETIME}</if>
+            <if test="lASTTIME != null">LAST_TIME = #{lASTTIME}</if>
+        </trim>
+		WHERE
+			(ID = #{iD})
+	</update>
+
+	<delete id="delete" parameterType="SPU">
+		DELETE FROM SPU
+		WHERE
+			(ID = #{iD})
+	</delete>
+
+
+
+</sqlMap>

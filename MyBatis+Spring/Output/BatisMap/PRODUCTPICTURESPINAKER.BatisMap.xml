@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+	
+<mapper namespace="com.shangpin.iog.dao.IPRODUCTPICTURESPINAKERDao">
+
+	<resultMap id="PRODUCTPICTURESPINAKER-FullResultMap" class="PRODUCTPICTURESPINAKER">
+		<result property="id" column="id"/>
+		<result property="productId" column="product_id"/>
+		<result property="itemId" column="item_id"/>
+		<result property="url" column="url"/>
+	</resultMap>
+
+	<select id="getCount" parameterType="java.util.Map" resultType="Integer">
+		SELECT count(1) FROM PRODUCT_PICTURE_SPINAKER
+        <trim prefix="WHERE" prefixOverrides="AND|OR ">
+            <if test="productId!=null">
+    		  and product_id = #{productId}
+            </if>
+            <if test="itemId!=null">
+    		  and item_id = #{itemId}
+            </if>
+            <if test="url!=null">
+    		  and url = #{url}
+            </if>
+        </trim>
+	</select>
+	
+	<select id="findAll" resultMap="PRODUCTPICTURESPINAKER-FullResultMap">
+		SELECT
+            id
+            , product_id
+            , item_id
+            , url
+		FROM PRODUCT_PICTURE_SPINAKER
+	</select>
+	
+	<select id="find" parameterType="Integer" resultMap="PRODUCTPICTURESPINAKER-FullResultMap">
+		SELECT
+            id
+            , product_id
+            , item_id
+            , url
+		FROM PRODUCT_PICTURE_SPINAKER
+		WHERE
+		(id = #{id})
+	</select>
+	
+	<insert id="insert" parameterType="PRODUCTPICTURESPINAKER">
+		INSERT INTO PRODUCT_PICTURE_SPINAKER (
+			 product_id
+			, item_id
+			, url
+		) VALUES (
+			 #{productId}
+			, #{itemId}
+			, #{url}
+		)
+		<selectKey resultType="Integer" keyProperty="id" order="AFTER">
+            <!--mysql-->
+			select LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+    
+	<insert id="insertMap" parameterType="java.util.Map">
+		INSERT INTO PRODUCT_PICTURE_SPINAKER 
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="productId != null">
+			        product_id,
+                </if>
+                <if test="itemId != null">
+			        item_id,
+                </if>
+                <if test="url != null">
+			        url,
+                </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="productId != null">
+			        #{productId}
+                </if>
+                <if test="itemId != null">
+			        #{itemId}
+                </if>
+                <if test="url != null">
+			        #{url}
+                </if>
+        </trim>
+		)
+		<selectKey resultType="Integer" keyProperty="id" order="AFTER">
+            <!--mysql-->
+			select LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+    
+	<insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO PRODUCT_PICTURE_SPINAKER (
+			 product_id
+			, item_id
+			, url
+		) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        <![CDATA[(
+			 #{item.productId}
+			, #{item.itemId}
+			, #{item.url}
+             )]]>
+        </foreach>
+    </insert>
+
+	<update id="update" parameterType="PRODUCTPICTURESPINAKER">
+		UPDATE PRODUCT_PICTURE_SPINAKER SET
+			 product_id = #productId#
+			, item_id = #itemId#
+			, url = #url#
+		WHERE
+			(id = #{id})
+	</update>
+    
+    <update id="updateByMap" parameterType="java.util.Map">
+		UPDATE PRODUCT_PICTURE_SPINAKER 
+        SET
+        <trim suffixOverrides=",">
+            <if test="productId != null">
+		        product_id = #{productId}
+		    </if>
+            <if test="itemId != null">
+		        item_id = #{itemId}
+		    </if>
+            <if test="url != null">
+		        url = #{url}
+		    </if>
+        </trim>
+		WHERE
+			(id = #{id})
+	</update>
+
+    <update id="updateDynamic" parameterType="PRODUCTPICTURESPINAKER">
+		UPDATE PRODUCT_PICTURE_SPINAKER 
+        SET
+        <trim suffixOverrides=",">
+            <if test="productId != null">product_id = #{productId}</if>
+            <if test="itemId != null">item_id = #{itemId}</if>
+            <if test="url != null">url = #{url}</if>
+        </trim>
+		WHERE
+			(id = #{id})
+	</update>
+
+	<delete id="delete" parameterType="PRODUCTPICTURESPINAKER">
+		DELETE FROM PRODUCT_PICTURE_SPINAKER
+		WHERE
+			(id = #{id})
+	</delete>
+
+
+
+</sqlMap>

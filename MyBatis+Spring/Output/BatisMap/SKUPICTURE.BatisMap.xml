@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+	
+<mapper namespace="com.shangpin.iog.dao.ISKUPICTUREDao">
+
+	<resultMap id="SKUPICTURE-FullResultMap" class="SKUPICTURE">
+		<result property="iD" column="ID"/>
+		<result property="sUPPLIERID" column="SUPPLIER_ID"/>
+		<result property="sKUID" column="SKU_ID"/>
+		<result property="pICURL" column="PIC_URL"/>
+	</resultMap>
+
+	<select id="getCount" parameterType="java.util.Map" resultType="Integer">
+		SELECT count(1) FROM SKU_PICTURE
+        <trim prefix="WHERE" prefixOverrides="AND|OR ">
+            <if test="sUPPLIERID!=null">
+    		  and SUPPLIER_ID = #{sUPPLIERID}
+            </if>
+            <if test="sKUID!=null">
+    		  and SKU_ID = #{sKUID}
+            </if>
+            <if test="pICURL!=null">
+    		  and PIC_URL = #{pICURL}
+            </if>
+        </trim>
+	</select>
+	
+	<select id="findAll" resultMap="SKUPICTURE-FullResultMap">
+		SELECT
+            ID
+            , SUPPLIER_ID
+            , SKU_ID
+            , PIC_URL
+		FROM SKU_PICTURE
+	</select>
+	
+	<select id="find" parameterType="String" resultMap="SKUPICTURE-FullResultMap">
+		SELECT
+            ID
+            , SUPPLIER_ID
+            , SKU_ID
+            , PIC_URL
+		FROM SKU_PICTURE
+		WHERE
+		(ID = #{iD})
+	</select>
+	
+	<insert id="insert" parameterType="SKUPICTURE">
+		INSERT INTO SKU_PICTURE (
+			 SUPPLIER_ID
+			, SKU_ID
+			, PIC_URL
+		) VALUES (
+			 #{sUPPLIERID}
+			, #{sKUID}
+			, #{pICURL}
+		)
+		<selectKey resultType="String" keyProperty="iD" order="AFTER">
+            <!--mysql-->
+			select LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+    
+	<insert id="insertMap" parameterType="java.util.Map">
+		INSERT INTO SKU_PICTURE 
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="sUPPLIERID != null">
+			        SUPPLIER_ID,
+                </if>
+                <if test="sKUID != null">
+			        SKU_ID,
+                </if>
+                <if test="pICURL != null">
+			        PIC_URL,
+                </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="sUPPLIERID != null">
+			        #{sUPPLIERID}
+                </if>
+                <if test="sKUID != null">
+			        #{sKUID}
+                </if>
+                <if test="pICURL != null">
+			        #{pICURL}
+                </if>
+        </trim>
+		)
+		<selectKey resultType="String" keyProperty="iD" order="AFTER">
+            <!--mysql-->
+			select LAST_INSERT_ID() as value
+		</selectKey>
+	</insert>
+    
+	<insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO SKU_PICTURE (
+			 SUPPLIER_ID
+			, SKU_ID
+			, PIC_URL
+		) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        <![CDATA[(
+			 #{item.sUPPLIERID}
+			, #{item.sKUID}
+			, #{item.pICURL}
+             )]]>
+        </foreach>
+    </insert>
+
+	<update id="update" parameterType="SKUPICTURE">
+		UPDATE SKU_PICTURE SET
+			 SUPPLIER_ID = #sUPPLIERID#
+			, SKU_ID = #sKUID#
+			, PIC_URL = #pICURL#
+		WHERE
+			(ID = #{iD})
+	</update>
+    
+    <update id="updateByMap" parameterType="java.util.Map">
+		UPDATE SKU_PICTURE 
+        SET
+        <trim suffixOverrides=",">
+            <if test="sUPPLIERID != null">
+		        SUPPLIER_ID = #{sUPPLIERID}
+		    </if>
+            <if test="sKUID != null">
+		        SKU_ID = #{sKUID}
+		    </if>
+            <if test="pICURL != null">
+		        PIC_URL = #{pICURL}
+		    </if>
+        </trim>
+		WHERE
+			(ID = #{iD})
+	</update>
+
+    <update id="updateDynamic" parameterType="SKUPICTURE">
+		UPDATE SKU_PICTURE 
+        SET
+        <trim suffixOverrides=",">
+            <if test="sUPPLIERID != null">SUPPLIER_ID = #{sUPPLIERID}</if>
+            <if test="sKUID != null">SKU_ID = #{sKUID}</if>
+            <if test="pICURL != null">PIC_URL = #{pICURL}</if>
+        </trim>
+		WHERE
+			(ID = #{iD})
+	</update>
+
+	<delete id="delete" parameterType="SKUPICTURE">
+		DELETE FROM SKU_PICTURE
+		WHERE
+			(ID = #{iD})
+	</delete>
+
+
+
+</sqlMap>

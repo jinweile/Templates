@@ -1,0 +1,127 @@
+﻿<%-- 
+Name:	IBatisGen.DaoIntf.cst
+Version: 2007.02.08
+Author: jinwl  ( jinweile@163.com )
+Description: Generates the data access interface for IBatis (see ibatis.apache.org)
+--%>
+<%@ CodeTemplate Language="C#" TargetLanguage="C#" Src="CSBatisBuilder.cs" Inherits="TableTemplate" Debug="true"  Description="Generates IBatis map and data class from a database table." %>
+
+<%@ Assembly Name="System" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Assembly Name="CodeSmith.BaseTemplates" %>
+<%@ Assembly Name="CodeSmith.CustomProperties" %>
+<%@ Assembly Name="SchemaExplorer" %>
+<%--<%@ Assembly Src="CSBatisBuilder.cs" %>--%>
+
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.ComponentModel" %>
+<%@ Import Namespace="System.Collections.Specialized" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Import Namespace="System.Text" %>
+<%@ Import Namespace="CSBatisBuilder" %>
+<script runat="template">
+	protected override FileOption GetDefaultFileOption() {
+		return FileSetOption.CreateDefaultServiceIntfOption();
+	}
+</script>
+package <% =Builder.ServiceIntfNamespace %>;
+
+import java.sql.SQLException;
+import java.util.Map;
+import java.util.List;
+import java.util.Date;
+import java.math.BigDecimal;
+
+<%	if (Builder.ServiceIntfOption.Usings != null) {
+		foreach (String s in Builder.ServiceIntfOption.Usings) { %>
+import <% =s %>.*;
+<%		} %>
+<%	} %>
+<%	if (Builder.EntityNamespace != Builder.ServiceIntfNamespace) { %>
+import <% =Builder.EntityNamespace %>.*;
+<%	} %>
+
+/**
+ *<% =Builder.ServiceIntfName %> is the Service interface for <% =Builder.EntityQualifiedName %>
+ */
+public <% =Builder.ServiceIntfPartialDecl %>interface <% =Builder.ServiceIntfName %><% =Builder.ServiceIntfBaseDecl %> {        
+
+<%	//GetCount
+if (Builder.DaoMethodSetOption.GetCountOption.GenerateIntf) { %>
+	/**
+	 *Returns the total count of objects
+	 */
+	int <% =Builder.GetCountMethod %>(Map param) throws SQLException;
+
+<%	} %>
+<%	//Find
+if (Builder.DaoMethodSetOption.FindOption.GenerateIntf) { %>
+	/**
+	 *Finds a <% =Builder.EntityName %> instance by the primary key value
+	 */
+	<% =Builder.EntityName %> <% =Builder.FindMethod %>(<% =Builder.GetClrParamsDecl(Builder.PkColumns) %>) throws SQLException;
+
+    /**
+	 *Finds list <% =Builder.EntityName %> instances by the map
+	 */
+    List<<% =Builder.EntityName %>> <% =Builder.FindListByMap %>(Map param) throws SQLException;
+    
+    /**
+	 *Finds list page <% =Builder.EntityName %> instances by the map and start and end
+	 */
+    List<<% =Builder.EntityName %>> <% =Builder.FindListPage %>(Map param,  int start, int end) throws SQLException;
+
+<%	} //if %>
+<%	//FindAll
+if (Builder.DaoMethodSetOption.FindAllOption.GenerateIntf) { %>
+	/**
+	 *Finds all <% =Builder.EntityName %> instances.
+	 */
+	List<<% =Builder.EntityName %>> <% =Builder.FindAllMethod %>() throws SQLException;
+	
+<%	} //if %>
+<%	//Insert
+if (Builder.DaoMethodSetOption.InsertOption.GenerateIntf) { %>
+	/**
+	 *Inserts a new <% =Builder.EntityName %> instance into underlying database table.
+	 */
+	<% =Builder.PkColumns[0].ClrTypeDecl%> <% =Builder.InsertMethod %>(<% =Builder.EntityName %> obj) throws SQLException;
+    
+	/**
+	 *Inserts a new <% =Builder.EntityName %> instance into underlying database table.
+	 */
+	<% =Builder.PkColumns[0].ClrTypeDecl%> <% =Builder.InsertMethod %>Map(Map obj) throws SQLException;
+	
+    /**
+	 *Inserts list <% =Builder.EntityName %> instances into underlying database table.
+	 */
+    void <% =Builder.InsertList %>(List<<% =Builder.EntityName %>> list) throws SQLException;
+    
+<%	} //if %>
+<%	//Update
+if (Builder.DaoMethodSetOption.UpdateOption.GenerateIntf) { %>
+	/**
+	 *Update the underlying database record of a <% =Builder.EntityName %> instance.
+	 */
+	int <% =Builder.UpdateMethod %>(<% =Builder.EntityName %> obj) throws SQLException;
+    
+    /**
+	 *Update the underlying database record of a <% =Builder.EntityName %> instance by map.
+	 */
+    int <% =Builder.UpdateMethod %>ByMap(Map param) throws SQLException;
+    
+    /**
+	 *Update the underlying database record of a <% =Builder.EntityName %> instance by model.
+	 */
+    int <% =Builder.UpdateMethod %>Dynamic(<% =Builder.EntityName %> model) throws SQLException;
+	
+<%	} //if %>
+<%	//Delete
+if (Builder.DaoMethodSetOption.DeleteOption.GenerateIntf) { %>
+	/**
+	 *Delete the underlying database record of a <% =Builder.EntityName %> instance.
+	 */
+	int <% =Builder.DeleteMethod %>(<% =Builder.EntityName %> obj) throws SQLException;
+	
+<%	} //if %>
+}

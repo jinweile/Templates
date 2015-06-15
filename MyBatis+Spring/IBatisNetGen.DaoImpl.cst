@@ -1,0 +1,207 @@
+﻿<%-- 
+Name:	IBatis.DaoImpl.cst
+Version: 2007.02.08
+Author: Jinwl  ( jinweile@163.com )
+Description: Generates the data access interface for IBatis (see ibatis.apache.org)
+--%>
+<%@ CodeTemplate Language="C#" TargetLanguage="C#" Src="CSBatisBuilder.cs" Inherits="TableTemplate" Debug="true"  Description="Generates IBatis map and data class from a database table." %>
+
+<%@ Assembly Name="System" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Assembly Name="CodeSmith.BaseTemplates" %>
+<%@ Assembly Name="CodeSmith.CustomProperties" %>
+<%@ Assembly Name="SchemaExplorer" %>
+<%--<%@ Assembly Src="CSBatisBuilder.cs" %>--%>
+
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.ComponentModel" %>
+<%@ Import Namespace="System.Collections.Specialized" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Import Namespace="System.Text" %>
+<%@ Import Namespace="CSBatisBuilder" %>
+<script runat="template">
+	protected override FileOption GetDefaultFileOption() {
+		return FileSetOption.CreateDefaultDaoImplOption();
+	}
+</script>
+package <% =Builder.DaoImplNamespace %>;
+
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
+import java.util.Date;
+import java.math.BigDecimal;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
+
+<%	if (Builder.EntityNamespace != Builder.DaoImplNamespace) { %>
+import <% =Builder.EntityNamespace %>.<% =Builder.EntityName %>;
+<%	} %>
+<%	if (Builder.DaoIntfNamespace != Builder.DaoImplNamespace) { %>
+import <% =Builder.DaoIntfNamespace %>.<% =Builder.DaoIntfName %>;
+<%	} %>
+<%	if (Builder.DaoImplOption.Usings != null) {
+		foreach (String s in Builder.DaoImplOption.Usings) { %>
+import <% =s %>.*;
+<%		} %>
+<%	} %>
+	
+/**
+ *<% =Builder.DaoImplName %> is the implementation of <% =Builder.DaoIntfName %>
+ */
+public <% =Builder.DaoImplPartialDecl %>class <% =Builder.DaoImplName %><% =Builder.DaoImplBaseDecl %> {
+	
+	private SqlMapClient <% =Builder.SqlMapper %> = null;
+	
+	/**
+	 * data map
+	 * @param mapper
+	 */
+	public void setMapper(SqlMapClient <% =Builder.SqlMapper %>){
+		this.<% =Builder.SqlMapper %> = <% =Builder.SqlMapper %>;
+	}
+
+<%	//GetCount
+if (Builder.DaoMethodSetOption.GetCountOption.GenerateImpl) { %>
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.GetCountMethod %>
+	 */
+	public int <% =Builder.GetCountMethod %>(Map param) throws SQLException {
+		String stmtId = "<% =Builder.GetCountStmtId %>";
+		int result = (Integer)<% =Builder.SqlMapper %>.queryForObject(stmtId, param);
+		return result;
+	}
+
+<%	} %>
+<%	//Find
+if (Builder.DaoMethodSetOption.FindOption.GenerateImpl) { %>
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.FindMethod %>
+	 */
+	public <% =Builder.EntityName %> <% =Builder.FindMethod %>(<% =Builder.GetClrParamsDecl(Builder.PkColumns) %>) throws SQLException {
+		String stmtId = "<% =Builder.FindStmtId %>";
+		<% =Builder.EntityName %> result = (<% =Builder.EntityName %>) <% =Builder.SqlMapper %>.queryForObject(stmtId, <% =Builder.GetClrParamNames(Builder.PkColumns) %>);
+		return result;
+	}
+
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.FindListByMap %>
+	 */
+    public List<<% =Builder.EntityName %>> <% =Builder.FindListByMap %>(Map param) throws SQLException {
+        String stmtId = "<% =Builder.SelectStmtId %>";
+        List<<% =Builder.EntityName %>> result = <% =Builder.SqlMapper %>.queryForList(stmtId, param);
+        return result;
+    }
+
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.FindListPage %>
+	 */           
+    public List<<% =Builder.EntityName %>> <% =Builder.FindListPage %>(Map param,  int start, int end) throws SQLException {
+        String stmtId = "<% =Builder.SelectPagerStmtId %>";
+        if (param == null) {
+            param = new HashMap();
+        }
+        if (start > 0) {
+            param.put("Start", start);
+        }
+        <%-- sqlserver
+        if (end > 0) {
+            param.put("End", end);
+        }
+        --%>
+        if (end > 0) {
+            param.put("PageCount", end - start);
+        }
+        List<<% =Builder.EntityName %>> result = <% =Builder.SqlMapper %>.queryForList(stmtId, param);
+        return result;
+    }
+
+<%	} %>
+<%	//FindAll
+if (Builder.DaoMethodSetOption.FindAllOption.GenerateIntf) { %>
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.FindAllMethod %>
+	 */
+	@SuppressWarnings("unchecked")
+	public List<<% =Builder.EntityName %>> <% =Builder.FindAllMethod %>() throws SQLException {
+		String stmtId = "<% =Builder.FindAllStmtId %>";
+		List<<% =Builder.EntityName %>> result = <% =Builder.SqlMapper %>.queryForList(stmtId, null);
+		return result;
+	}
+	
+<%	} //if %>
+<%	//Insert
+if (Builder.DaoMethodSetOption.InsertOption.GenerateImpl) { %>
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.InsertMethod %>
+	 */
+	public <% =Builder.PkColumns[0].ClrTypeDecl%> <% =Builder.InsertMethod %>(<% =Builder.EntityName %> obj) throws SQLException {
+		if (obj == null) throw new NullPointerException("obj");
+		String stmtId = "<% =Builder.InsertStmtId %>";
+		return (<% =Builder.PkColumns[0].ClrTypeDecl%>) <% =Builder.SqlMapper %>.insert(stmtId, obj);
+	}
+    
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.InsertMethod %>Map
+	 */
+	public <% =Builder.PkColumns[0].ClrTypeDecl%> <% =Builder.InsertMethod %>Map(Map obj) throws SQLException {
+		if (obj == null) throw new NullPointerException("obj");
+		String stmtId = "<% =Builder.InsertStmtId %>Map";
+		return (<% =Builder.PkColumns[0].ClrTypeDecl%>) <% =Builder.SqlMapper %>.insert(stmtId, obj);
+	}
+    
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.InsertList %>
+	 */
+    public void <% =Builder.InsertList %>(List<<% =Builder.EntityName %>> list) throws SQLException {
+        if (list == null || list.size() == 0) throw new NullPointerException("list");
+        String stmtId = "<% =Builder.InsertStmtId %>Batch";
+	    <% =Builder.SqlMapper %>.insert(stmtId, list);
+    }
+	
+<%	} //if %>
+<%	//Update
+if (Builder.DaoMethodSetOption.UpdateOption.GenerateImpl) { %>
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.UpdateMethod %>
+	 */
+	public int <% =Builder.UpdateMethod %>(<% =Builder.EntityName %> obj) throws SQLException {
+		if (obj == null) throw new NullPointerException("obj");
+		String stmtId = "<% =Builder.UpdateStmtId %>";
+		return <% =Builder.SqlMapper %>.update(stmtId, obj);
+	}
+    
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.UpdateMethod %>ByMap
+	 */
+    public int <% =Builder.UpdateMethod %>ByMap(Map param) throws SQLException {
+		String stmtId = "<% =Builder.UpdateStmtId %>ByMap";
+		return <% =Builder.SqlMapper %>.update(stmtId, param);
+	}
+    
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.UpdateMethod %>Dynamic
+	 */
+    public int <% =Builder.UpdateMethod %>Dynamic(<% =Builder.EntityName %> model) throws SQLException {
+		if (model == null) throw new NullPointerException("model");
+		String stmtId = "<% =Builder.UpdateStmtId %>Dynamic";
+		return <% =Builder.SqlMapper %>.update(stmtId, model);
+	}
+	
+<%	} //if %>
+<%	//Delete
+if (Builder.DaoMethodSetOption.DeleteOption.GenerateImpl) { %>
+	/**
+	 *Implements <% =Builder.DaoIntfName %>.<% =Builder.DeleteMethod %>
+	 */
+	public int <% =Builder.DeleteMethod %>(<% =Builder.EntityName %> obj) throws SQLException {
+		if (obj == null) throw new NullPointerException("obj");
+		String stmtId = "<% =Builder.DeleteStmtId %>";
+		return <% =Builder.SqlMapper %>.delete(stmtId, obj);
+	}
+	
+<%	} //if %>
+
+
+}
