@@ -74,7 +74,7 @@ Description: Generates SQLMapping/DataClass/DaoIntf/DaoImpl files for IBatis.Net
 	} %>
 
 <%	foreach (String s in batisMapFileNames) {	%>
-<sqlMap resource="SqlMaps\<% =s %>" />
+<sqlMap embedded="${root}<% =s %>, ${assymbly}" />
 <%	}	%>
 <%	for (int i = 0; i < intfNames.Count; i ++) {
 		String intfName = intfNames[i];

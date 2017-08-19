@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -915,7 +915,7 @@ namespace CSBatisBuilder {
         #region BatisMapOption
 
         public static FileOption CreateDefaultBatisMapOption() {
-            return new FileOption(false, @"Output\BatisMap", "{0}.BatisMap.xml");
+            return new FileOption(false, @"Output\BatisMap", "{0}.xml");
         }
 
         private FileOption m_BatisMapOption = CreateDefaultBatisMapOption();

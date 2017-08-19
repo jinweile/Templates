@@ -27,6 +27,7 @@ Description: Generate data class and its sql mapping file for IBatis.Net (see ib
 //	CAUTION: This file is generated  at <% =CodeTemplateInfo.DateCreated %>
 //==============================================================================
 using System;
+using System.Runtime.Serialization;
 
 <%	if (Builder.EntityOption.Usings != null) {
 		foreach (String s in Builder.EntityOption.Usings) { %>
@@ -34,23 +35,16 @@ using <% =s %>;
 <%		} %>
 <%	} %>
 namespace <% =Builder.EntityNamespace %> {
-	
+
+    [DataContract]
     [Serializable]
     public <% =Builder.EntityPartialDecl %>class <% =Builder.EntityName %><% =Builder.EntityBaseDecl %> {
         
         <% foreach (ColumnInfo c in Builder.Columns) { %>
-        #region <% =c.PropName %>
-
-        <% =c.VarAccessDecl %> <% =c.ClrTypeDecl %> <% =c.VarName %>;
-		
+        <%-- =c.VarAccessDecl %> <% =c.ClrTypeDecl %> <% =c.VarName; --%>
 		/// <summary>Gets or sets <% =c.PropName %></summary>
-        <% =c.PropAccessDecl %> <% =c.ClrTypeDecl %> <% =c.PropName %> {
-        	get { return <% =c.VarName %>; }
-        	set { <% =c.VarName %> = value;}        
-        }
-		
-	    #endregion
-		
+        [DataMember]
+        <% =c.PropAccessDecl %> <% =c.ClrTypeDecl %> <% =c.PropName %> { get; set; }
 		<% } %>
 
 	}
